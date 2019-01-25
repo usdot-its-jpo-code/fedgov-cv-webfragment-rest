@@ -1,4 +1,4 @@
-package gov.usdot.restfragment.model;
+package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
 public class DepositRequest {
 	
