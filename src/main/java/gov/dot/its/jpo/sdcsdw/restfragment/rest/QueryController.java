@@ -1,5 +1,6 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.rest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +13,12 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResults;
 
 @RestController
-@RequestMapping("/whtools/rest/v2")
+@RequestMapping("/v2")
 public class QueryController {
 
+    @Autowired
+    public QueryController() {}
+    
 	@RequestMapping(value="/deposit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public DepositResponse deposit(@RequestBody DepositRequest request) {
 		return null;
