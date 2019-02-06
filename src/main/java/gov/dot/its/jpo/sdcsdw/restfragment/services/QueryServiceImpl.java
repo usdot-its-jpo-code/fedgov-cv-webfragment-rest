@@ -28,6 +28,33 @@ public class QueryServiceImpl implements QueryService {
 	public QueryServiceImpl(WarehouseService warehouseService) {
 		this.warehouseService = warehouseService;
 	}
+	
+	@Override
+	public void setDefaults(Query query) {
+		if(query.getResultEncoding() == null)
+			query.setResultEncoding(QueryOptions.getDefaultResultEncoding());
+		
+		if(query.getResultPackaging() == null)
+			query.setResultPackaging(QueryOptions.getDefaultResultPackaging());
+		
+		if(query.getOrderByField() == null)
+			query.setOrderByField(QueryOptions.getDefaultOrderByField());
+		
+		if(query.getOrderByOrder() == null)
+			query.setOrderByOrder(QueryOptions.getDefaultOrderByOrder());
+		
+		if(query.getSkip() == null)
+			query.setSkip(QueryOptions.getDefaultSkip());
+		
+		if(query.getLimit() == null)
+			query.setLimit(QueryOptions.getDefaultLimit());
+		
+		if(query.getStartDateOperator() == null)
+			query.setStartDateOperator(QueryOptions.getDefaultStartDateOperator());
+		
+		if(query.getEndDateOperator() == null)
+			query.setEndDateOperator(QueryOptions.getDefaultEndDateOperator());
+	}
 
 	@Override
 	public void validateQuery(Query query) throws InvalidQueryException {
@@ -161,12 +188,10 @@ public class QueryServiceImpl implements QueryService {
 			}
 			
 			//OPTIONAL: skip
-			//Skip is parsed to Integer when the query is mapped to the Query object
-			//If not provided, skip is null
+			//Skip is parsed to Integer and validated when the query is mapped to the Query object
 			
 			//OPTIONAL: limit
-			//Limit is parsed to Integer when the query is mapped to the Query object
-			//If not provided, limit is null
+			//Limit is parsed to Integer and validated when the query is mapped to the Query object
 			
 			//OPTIONAL: resultEncoding
 			if(query.getResultEncoding() != null) {

@@ -8,6 +8,9 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryService {
 
+	//Set defaults
+	public void setDefaults(Query query);
+	
 	//Validate query
 	public void validateQuery(Query query) throws InvalidQueryException;
 	

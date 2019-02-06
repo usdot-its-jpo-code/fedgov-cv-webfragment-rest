@@ -8,12 +8,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Utility class containing valid query options.
+ * Utility class containing valid query options and defaults.
  * @author dg31036
  *
  */
 public class QueryOptions {
 
+	//Default values for applicable parameters
+	private static final String defaultResultEncoding = "hex";
+	private static final String defaultResultPackaging = "none";
+	private static final String defaultOrderByField = "none";
+	private static final String defaultOrderByOrder = "ascending";
+	private static final int defaultSkip = 0;
+	private static final int defaultLimit = 0;
+	private static final String defaultStartDateOperator = "GTE";
+	private static final String defaultEndDateOperator = "LTE";
+	
 	//Collection of possible dialog ID values as Strings (ability to choose from either number or string representation)
 	private static final List<String> dialogIdOptions = new ArrayList<String>();
 	
@@ -145,5 +155,37 @@ public class QueryOptions {
 	
 	public static DateFormat getSDFMillis() {
 		return new SimpleDateFormat(sdfMillis);
+	}
+	
+	public static String getDefaultResultEncoding() {
+		return defaultResultEncoding;
+	}
+	
+	public static String getDefaultResultPackaging() {
+		return defaultResultPackaging;
+	}
+	
+	public static String getDefaultOrderByField() {
+		return defaultOrderByField;
+	}
+	
+	public static String getDefaultOrderByOrder() {
+		return defaultOrderByOrder;
+	}
+	
+	public static int getDefaultSkip() {
+		return defaultSkip;
+	}
+	
+	public static int getDefaultLimit() {
+		return defaultLimit;
+	}
+	
+	public static String getDefaultStartDateOperator() {
+		return defaultStartDateOperator;
+	}
+	
+	public static String getDefaultEndDateOperator() {
+		return defaultEndDateOperator;
 	}
 }

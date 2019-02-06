@@ -47,7 +47,8 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 	public QueryResult queryAndBundle(Query query) throws CodecFailedException, FormattingFailedException, UnformattingFailedException, IOException, DecoderException, JAXBException, InvalidQueryException {
 		// TODO Auto-generated method stub
 		
-		//Perform query validation
+		//Set default query values, if necessary, and perform query validation
+		queryService.setDefaults(query);
 		queryService.validateQuery(query);
 		
 		//Perform the query. The results returned are encoded based on the 
@@ -62,7 +63,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		QueryResult qr = new QueryResult();
 		
 		//If the result packaging parameter is not null and does not equal none
-		if(query.getResultPackaging() != null && !query.getResultPackaging().equals("none")) {
+		if(!query.getResultPackaging().equals("none")) {
 			//create ASD list and bundle
 			List<AdvisorySituationData> asdList = convertResultsToASDList(queryResults, query);
 			
@@ -84,9 +85,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
 		
 		//Determine how the results are encoded from query parameter
-		String resultEncoding = "hex";
-		if(query.getResultEncoding() != null)
-			resultEncoding = query.getResultEncoding();
+		String resultEncoding = query.getResultEncoding();
 		
 		//For each queryResult
 		for(String queryResult : queryResults) {
@@ -97,11 +96,11 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 				encodedMsgAsHex = queryResult;
 				
 			} else if(resultEncoding.equalsIgnoreCase("base64")) {
-				//convert to hex
+				//Convert to hex
 				encodedMsgAsHex = Hex.encodeHexString(Base64.decodeBase64(queryResult));
 				
 			} else if(resultEncoding.equalsIgnoreCase("full")) {
-				//extract encodedMsg
+				//Extract encodedMsg
 				ObjectMapper mapper = new ObjectMapper();
 				try {
 					JsonNode node = mapper.readTree(queryResult);

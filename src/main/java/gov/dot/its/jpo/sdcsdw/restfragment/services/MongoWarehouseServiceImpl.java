@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.context.annotation.Primary;
@@ -19,19 +16,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.Asn1Types;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.PerXerCodec;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecFailedException;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.FormattingFailedException;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.UnformattingFailedException;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.RawPerData;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoDBConnection;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
-import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
 @Service
 @Primary
@@ -55,7 +43,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 			List<DBObject> retrievedRecords = retrieveRecords(cursor);
 			encodedRecords = encodeRecords(retrievedRecords, query);
 		} catch (InvalidQueryException e) {
-			//log the exception
+			//TODO log the exception
 		}
 		
 		return encodedRecords;
@@ -129,18 +117,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 			
 			DBObject dateRange = new BasicDBObject();
 			if (startDate != null) {
-				//Start date operator defaults to GTE. If provided, set appropriately.
-				String startDateOperator = "GTE";
-				if(query.getStartDateOperator() != null)
-					startDateOperator = query.getStartDateOperator();
+				//Set start date operator. Default is GTE.
+				String startDateOperator = query.getStartDateOperator();
 				
 				dateRange.put("$" + startDateOperator.toLowerCase(), startDate);
 			}
 			if (endDate != null) {
-				//End date operator defaults to LTE. If provided, set appropriately.
-				String endDateOperator = "LTE";
-				if(query.getEndDateOperator() != null)
-					endDateOperator = query.getEndDateOperator();
+				//Set end date operator. Default is LTE.
+				String endDateOperator = query.getEndDateOperator();
 				
 				dateRange.put("$" + endDateOperator.toLowerCase(), endDate);
 			}
@@ -155,10 +139,8 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		StringBuilder queryParams = new StringBuilder();
 		DBObject fieldNames = null;
 		
-		//Result encoding defaults to hex. If provided, set appropriately.
-		String resultEncoding = "hex";
-		if (query.getResultEncoding() != null)
-			resultEncoding = query.getResultEncoding();
+		//Set result encoding. Default is hex.
+		String resultEncoding = query.getResultEncoding();
 		
 		if (!resultEncoding.equals("full")) {
 			fieldNames = new BasicDBObject(2);
@@ -167,20 +149,20 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 			queryParams.append(" fieldNames: ").append(fieldNames);
 		}
 		
+		//TODO Getting mongo connection
 		String collectionName = mongo.getConfig().collectionName;
 		DBCollection collection = mongo.getDatabase().getCollection(collectionName);
 		DBCursor cursor = (fieldNames == null) ? collection.find(mongoQuery) : collection.find(mongoQuery, fieldNames);
 		
 		//If order by field not provided, defaults to none (i.e., no ordering)
-		if (query.getOrderByField() != null && !query.getOrderByField().equals("none")) {
+		if (!query.getOrderByField().equals("none")) {
 			String orderByField = query.getOrderByField();
 			
-			//Order by order defaults to 1 (ascending). If provided, set appropriately.
+			//Order by order defaults to 1 (ascending). If descending, set appropriately.
 			int orderByOrder = 1;
-			if(query.getOrderByOrder() != null) {
-				if(query.getOrderByOrder().equals("descending") || query.getOrderByOrder().equals("-1"))
-					orderByOrder = -1;
-			}
+			if(query.getOrderByOrder().equals("descending") || query.getOrderByOrder().equals("-1"))
+				orderByOrder = -1;
+			
 			BasicDBObject orderBy = new BasicDBObject(orderByField, orderByOrder);
 			queryParams.append(" orderBy: ").append(orderBy);
 			cursor.sort(orderBy);
@@ -194,14 +176,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		}
 		
 		//If skip is provided and greater than 0, use skip. Otherwise ignored (i.e., skip is 0)
-		if(query.getSkip() != null && query.getSkip() > 0) {
-			cursor.skip(query.getSkip());
+		if(query.getSkip() > 0) {
+			cursor.skip(query.getSkip().intValue());
 			queryParams.append(" skip: ").append(query.getSkip());
 		}
 		
 		//If limit is provided and greater than 0, use limit. Otherwise ignored (i.e., limit is 0)
-		if(query.getLimit() != null && query.getLimit() > 0) {
-			cursor.limit(query.getLimit());
+		if(query.getLimit() > 0) {
+			cursor.limit(query.getLimit().intValue());
 			queryParams.append(" limit: ").append(query.getLimit());
 		}
 		
@@ -228,10 +210,8 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		//query's specified result encoding. This is either full, base64, or hex.
 		List<String> encodedRecords = new ArrayList<String>();
 		
-		//Get the result encoding, defaulting to hex if not provided by query
-		String resultEncoding = "hex";
-		if (query.getResultEncoding() != null)
-			resultEncoding = query.getResultEncoding();
+		//Get the result encoding. Default is hex.
+		String resultEncoding = query.getResultEncoding();
 		
 		//For each dbObject returned by the query
 		for(DBObject dbObj : dbObjs) {
@@ -254,7 +234,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 					encodedRecords.add(record);
 				
 			} else {
-				//log error regarding missing encoded msg from dbObj
+				//TODO log error regarding missing encoded msg from dbObj
 			}
 		}
 		
