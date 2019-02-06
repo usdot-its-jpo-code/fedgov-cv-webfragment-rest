@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -44,20 +45,20 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     private static final String REQUEST_ID_SORT_INDEX_NAME = "requestId_1_createdAt_1";
 	
 	@Override
-	public List<AdvisorySituationData> executeQuery(Query query) {		
-		List<AdvisorySituationData> asdList = null;
+	public List<String> executeQuery(Query query) {				
+		List<String> encodedRecords = null;
 		
 		//Use mongoDBConnection to execute the query
 		try {
 			BasicDBObject mongoQuery = buildMongoQuery(query);
 			DBCursor cursor = buildCursor(mongoQuery, query);
 			List<DBObject> retrievedRecords = retrieveRecords(cursor);
-			asdList = createListOfASDS(retrievedRecords, query);
+			encodedRecords = encodeRecords(retrievedRecords, query);
 		} catch (InvalidQueryException e) {
 			//log the exception
 		}
 		
-		return asdList;
+		return encodedRecords;
 	}
 	
 	private BasicDBObject buildMongoQuery(Query query) throws InvalidQueryException {
@@ -150,7 +151,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		return mongoQuery;
 	}
 	
-	private DBCursor buildCursor(BasicDBObject mongoQuery, Query query) throws InvalidQueryException {
+	private DBCursor buildCursor(BasicDBObject mongoQuery, Query query) {
 		StringBuilder queryParams = new StringBuilder();
 		DBObject fieldNames = null;
 		
@@ -219,6 +220,45 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		}
 		
 		return result;
+	}
+	
+	private List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
+		
+		//The list for encoded records. All records in the list will have the same encoding based on the
+		//query's specified result encoding. This is either full, base64, or hex.
+		List<String> encodedRecords = new ArrayList<String>();
+		
+		//Get the result encoding, defaulting to hex if not provided by query
+		String resultEncoding = "hex";
+		if (query.getResultEncoding() != null)
+			resultEncoding = query.getResultEncoding();
+		
+		//For each dbObject returned by the query
+		for(DBObject dbObj : dbObjs) {
+			String record = null;
+			
+			//If the object has the encodedMsg field
+			if(dbObj.containsField("encodedMsg")) {
+				if (resultEncoding.equalsIgnoreCase("full")) {
+					//Full encoding returns the full object
+					record = dbObj.toString();
+				} else if (resultEncoding.equalsIgnoreCase("base64")) {
+					//Base64 encoding returns the encoded message
+					record = dbObj.get("encodedMsg").toString();
+				} else if (resultEncoding.equalsIgnoreCase("hex")) {
+					//Hex encoding decodes the base64 encoded message, and then encodes it into hex
+					record = Hex.encodeHexString(Base64.decodeBase64(dbObj.get("encodedMsg").toString()));
+				}
+				
+				if(record != null)
+					encodedRecords.add(record);
+				
+			} else {
+				//log error regarding missing encoded msg from dbObj
+			}
+		}
+		
+		return encodedRecords;
 	}
 	
 	//Mirrors method used in UDP interface

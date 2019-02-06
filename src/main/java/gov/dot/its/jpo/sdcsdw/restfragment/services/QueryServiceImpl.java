@@ -184,9 +184,9 @@ public class QueryServiceImpl implements QueryService {
 	}
 
 	@Override
-	public List<AdvisorySituationData> forwardQuery(Query query) {		
+	public List<String> forwardQuery(Query query) {		
 		//Forward the query to the warehouse service to execute and retrieve data
-		List<AdvisorySituationData> results = warehouseService.executeQuery(query);
+		List<String> results = warehouseService.executeQuery(query);
 		return results;
 	}
 }

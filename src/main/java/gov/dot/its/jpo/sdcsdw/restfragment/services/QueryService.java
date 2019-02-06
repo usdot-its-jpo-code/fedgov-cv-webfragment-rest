@@ -12,5 +12,5 @@ public interface QueryService {
 	public void validateQuery(Query query) throws InvalidQueryException;
 	
 	//Execute the query
-	public List<AdvisorySituationData> forwardQuery(Query query);
+	public List<String> forwardQuery(Query query);
 }
