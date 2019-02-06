@@ -260,38 +260,4 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		
 		return encodedRecords;
 	}
-	
-	//Mirrors method used in UDP interface
-	private List<AdvisorySituationData> createListOfASDS(List<DBObject> retrievedRecords, Query query) {
-		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
-		
-//		String resultEncoding = "hex";
-//		if(query.getResultEncoding() != null)
-//			resultEncoding = query.getResultEncoding();
-
-		for(DBObject dbObj : retrievedRecords) {
-			String hexEncodedASD = dbObj.get("encodedMsg").toString();
-			byte[] hexEncodedASDAsByte = null;
-			try {
-				hexEncodedASDAsByte = Hex.decodeHex(hexEncodedASD);
-			} catch (DecoderException e) {
-				continue;
-			}
-			
-			try {
-				//Decode byte array to XML
-				String xerEncodedASD = (PerXerCodec.perToXer(Asn1Types.getAsn1TypeByName("AdvisorySituationData"),
-						hexEncodedASDAsByte, RawPerData.unformatter, RawXerData.formatter));
-				
-				//Convert XML to POJO
-				AdvisorySituationData asdObject = (AdvisorySituationData) XerJaxbCodec.XerToJaxbPojo(xerEncodedASD);
-				asdList.add(asdObject);
-			} catch (CodecFailedException | FormattingFailedException | UnformattingFailedException | JAXBException e) {
-				// Going to ignore this message
-				//logger.error("Failed to decode and convert to POJO ASD retrieved from Mongo", e);
-			}
-		}
-		
-		return asdList;
-	}
 }

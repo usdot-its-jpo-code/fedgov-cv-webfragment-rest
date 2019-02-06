@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositRequest;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositResponse;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
-import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResults;
+import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResult;
 import gov.dot.its.jpo.sdcsdw.restfragment.services.QueryAndBundlingService;
 
 @RestController
@@ -32,7 +32,7 @@ public class QueryController {
 	}
 	
 	@RequestMapping(value="/query", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public QueryResults query(@RequestBody Query query) {
+	public QueryResult query(@RequestBody Query query) {
 		
 		// Use combined service to get the results
 		List<T> results = queryAndBundle.queryAndBundle(query);

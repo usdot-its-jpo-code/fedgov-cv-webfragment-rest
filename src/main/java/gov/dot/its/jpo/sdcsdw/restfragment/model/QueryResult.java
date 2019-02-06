@@ -1,6 +1,6 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
-public class QueryResults {
+public class QueryResult {
 	
 	private String[] results;
 
