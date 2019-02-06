@@ -1,5 +1,7 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,8 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResults;
 @RestController
 @RequestMapping("/v2")
 public class QueryController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
 
     @Autowired
     public QueryController() {}
