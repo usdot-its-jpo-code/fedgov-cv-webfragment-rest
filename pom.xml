@@ -31,6 +31,18 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>gov.dot.its.jpo.sdcsdw</groupId>
+      <artifactId>common-models</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>gov.usdot</groupId>
+      <artifactId>fedgov-cv-webapp-websocket</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
   </dependencies>
   
