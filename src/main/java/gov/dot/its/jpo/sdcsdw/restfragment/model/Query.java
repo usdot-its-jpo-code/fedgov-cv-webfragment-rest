@@ -1,5 +1,8 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Query {
 	
 	private String systemQueryName;
@@ -7,13 +10,13 @@ public class Query {
 	private String resultPackaging;
 	private String orderByField;
 	private String orderByOrder;
-	private int skip;
-	private int limit;
+	private Integer skip;
+	private Integer limit;
 	private String dialogId;
-	private double nwLat;
-	private double nwLon;
-	private double seLat;
-	private double seLon;
+	private Double nwLat;
+	private Double nwLon;
+	private Double seLat;
+	private Double seLon;
 	private String startDate;
 	private String startDateOperator;
 	private String endDate;
@@ -82,25 +85,25 @@ public class Query {
 	/**
 	 * @return the skip
 	 */
-	public int getSkip() {
+	public Integer getSkip() {
 		return skip;
 	}
 	/**
 	 * @param skip the skip to set
 	 */
-	public void setSkip(int skip) {
+	public void setSkip(Integer skip) {
 		this.skip = skip;
 	}
 	/**
 	 * @return the limit
 	 */
-	public int getLimit() {
+	public Integer getLimit() {
 		return limit;
 	}
 	/**
 	 * @param limit the limit to set
 	 */
-	public void setLimit(int limit) {
+	public void setLimit(Integer limit) {
 		this.limit = limit;
 	}
 	/**
@@ -118,49 +121,49 @@ public class Query {
 	/**
 	 * @return the nwLat
 	 */
-	public double getNwLat() {
+	public Double getNwLat() {
 		return nwLat;
 	}
 	/**
 	 * @param nwLat the nwLat to set
 	 */
-	public void setNwLat(double nwLat) {
+	public void setNwLat(Double nwLat) {
 		this.nwLat = nwLat;
 	}
 	/**
 	 * @return the nwLon
 	 */
-	public double getNwLon() {
+	public Double getNwLon() {
 		return nwLon;
 	}
 	/**
 	 * @param nwLon the nwLon to set
 	 */
-	public void setNwLon(double nwLon) {
+	public void setNwLon(Double nwLon) {
 		this.nwLon = nwLon;
 	}
 	/**
 	 * @return the seLat
 	 */
-	public double getSeLat() {
+	public Double getSeLat() {
 		return seLat;
 	}
 	/**
 	 * @param seLat the seLat to set
 	 */
-	public void setSeLat(double seLat) {
+	public void setSeLat(Double seLat) {
 		this.seLat = seLat;
 	}
 	/**
 	 * @return the seLon
 	 */
-	public double getSeLon() {
+	public Double getSeLon() {
 		return seLon;
 	}
 	/**
 	 * @param seLon the seLon to set
 	 */
-	public void setSeLon(double seLon) {
+	public void setSeLon(Double seLon) {
 		this.seLon = seLon;
 	}
 	/**
@@ -210,5 +213,17 @@ public class Query {
 	 */
 	public void setEndDateOperator(String endDateOperator) {
 		this.endDateOperator = endDateOperator;
+	}
+	
+	public String toString() {
+		ObjectMapper mapper = new ObjectMapper();
+		String ret = null;
+		try {
+			ret = mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			System.out.println("Unable to parse Query into String");
+		}
+		return ret;
+
 	}
 }
