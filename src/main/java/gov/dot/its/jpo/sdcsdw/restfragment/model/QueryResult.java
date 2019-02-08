@@ -1,20 +1,22 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
+import java.util.List;
+
 public class QueryResult {
 	
-	private String[] results;
+	private List<String> results;
 
 	/**
 	 * @return the results
 	 */
-	public String[] getResults() {
+	public List<String> getResults() {
 		return results;
 	}
 
 	/**
 	 * @param results the results to set
 	 */
-	public void setResults(String[] results) {
+	public void setResults(List<String> results) {
 		this.results = results;
 	}	
 }

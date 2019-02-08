@@ -1,21 +1,13 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
-import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoConfigLoader;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;

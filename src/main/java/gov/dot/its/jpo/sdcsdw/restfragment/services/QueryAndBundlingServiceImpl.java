@@ -69,11 +69,16 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 			List<AdvisorySituationData> asdList = convertResultsToASDList(queryResults, query);
 			
 			//Call BundleService to get bundle or distribution
-			//Either get back query result or bundle/distribution. If the latter, convert to query result.
+			if(query.getResultPackaging().equals("bundle"))
+				this.bundleService.createBundleList(asdList, query);
+			
+			if(query.getResultPackaging().equals("distribution"))
+				this.bundleService.createDistributionList(asdList, query);
+			
+			//Requires converting bundle/distribution to string
 			
 		} else {
-			String[] resultsAsArray = queryResults.toArray(new String[0]);
-			qr.setResults(resultsAsArray);
+			qr.setResults(queryResults);
 		}
 		
 		
