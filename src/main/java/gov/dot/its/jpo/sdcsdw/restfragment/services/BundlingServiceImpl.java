@@ -17,8 +17,8 @@ import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 
 public class BundlingServiceImpl implements BundlingService {
 	@Override
-	public List<AdvisorySituationBundle> bundle(List<AdvisorySituationData> asd, Query query) {
-		List<AdvisorySituationDataDistribution> distributionList = distribution(asd, query);
+	public List<AdvisorySituationBundle> createBundleList(List<AdvisorySituationData> asd, Query query) {
+		List<AdvisorySituationDataDistribution> distributionList = createDistributionList(asd, query);
 		List<AdvisorySituationBundle> bundleList = new ArrayList<AdvisorySituationBundle>();
 		
 		for (AdvisorySituationDataDistribution distribution : distributionList) {
@@ -31,7 +31,7 @@ public class BundlingServiceImpl implements BundlingService {
 	
 	
 	@Override
-	public List<AdvisorySituationDataDistribution> distribution(List<AdvisorySituationData> asd, Query query) {
+	public List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, Query query) {
 		DialogID dialogIDObject = new DialogID();
 		dialogIDObject.setAdvSitDatDist(query.getDialogId());
 		AdvisorySituationDataDistributionList distributionListObject = MessageCreator.createAdvisorySituationDataDistributionList(asd, dialogIDObject, "00 00 00 00", "00 00 00 00");
