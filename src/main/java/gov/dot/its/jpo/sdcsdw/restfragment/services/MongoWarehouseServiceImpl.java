@@ -222,7 +222,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		return result;
 	}
 	
-	private List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
+	public List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
 		
 		//The list for encoded records. All records in the list will have the same encoding based on the
 		//query's specified result encoding. This is either full, base64, or hex.
