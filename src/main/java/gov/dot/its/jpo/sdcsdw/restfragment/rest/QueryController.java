@@ -1,14 +1,18 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.rest;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.DecoderException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,11 +29,12 @@ import gov.dot.its.jpo.sdcsdw.restfragment.services.QueryAndBundlingService;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 @RestController
-@RequestMapping("/whtools/rest/v2")
+@RequestMapping("/v2")
 public class QueryController {
-	
+
+    
+  private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
 	private QueryAndBundlingService queryAndBundle;
-	private static final Logger logger = Logger.getLogger(QueryController.class.getName());
 	
 	@Autowired
 	public QueryController (QueryAndBundlingService queryAndBundle) {
@@ -49,5 +54,10 @@ public class QueryController {
 		QueryResult result = queryAndBundle.queryAndBundle(query);
 
 		return result;
+	}
+	
+	@GetMapping("/health")
+	public String health() {
+	    return "alive";
 	}
 }
