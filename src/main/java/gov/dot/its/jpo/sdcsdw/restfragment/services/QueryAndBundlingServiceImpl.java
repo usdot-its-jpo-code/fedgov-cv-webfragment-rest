@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 
 	private QueryService queryService;
 	private BundlingService bundleService;
+	private final static Logger logger = Logger.getLogger(QueryAndBundlingServiceImpl.class.getName());
 	
 	@Autowired
 	public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService) {
@@ -45,7 +47,6 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 	//First query through query service
 	@Override
 	public QueryResult queryAndBundle(Query query) throws CodecFailedException, FormattingFailedException, UnformattingFailedException, IOException, DecoderException, JAXBException, InvalidQueryException {
-		// TODO Auto-generated method stub
 		
 		//Set default query values, if necessary, and perform query validation
 		queryService.setDefaults(query);
@@ -109,7 +110,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 					//Convert encodedMsg into hex (default stored as base64)
 					encodedMsgAsHex = Hex.encodeHexString(Base64.decodeBase64(encodedMsg));
 				} catch (IOException e) {
-					//TODO log inability to parse full string
+					logger.error("Unable to retrieve encodedMsg from full query result", e);
 					throw e;
 				}
 			}
@@ -131,7 +132,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		try {
 			hexEncodedASDAsByte = Hex.decodeHex(hexEncodedASD);
 		} catch (DecoderException e) {
-			//TODO log exception
+			logger.error("Unable to decode message from hex to byte", e);
 			throw e;
 		}
 		
@@ -144,8 +145,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 			asd = (AdvisorySituationData) XerJaxbCodec.XerToJaxbPojo(xerEncodedASD);
 
 		} catch (CodecFailedException | FormattingFailedException | UnformattingFailedException | JAXBException e) {
-			//TODO log exception
-			//logger.error("Failed to decode and convert to POJO ASD retrieved from Mongo", e);
+			logger.error("Failed to decode and convert to POJO ASD", e);
 			throw e;
 		}
 		

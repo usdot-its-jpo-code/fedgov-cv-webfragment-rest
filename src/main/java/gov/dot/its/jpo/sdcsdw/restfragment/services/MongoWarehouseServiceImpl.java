@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoDBConnection;
+import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientConnection;
+import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientLookup;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
@@ -25,26 +28,39 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 @Primary
 public class MongoWarehouseServiceImpl implements WarehouseService {
 
-	private MongoDBConnection mongo;
+	private MongoClientLookup mongoClientLookup;
+	private static final Logger logger = Logger.getLogger(MongoWarehouseServiceImpl.class.getName());
 	
 	//Required index names which must match index names on each MongoDB collection
 	private static final String NO_SORT_INDEX_NAME = "region_2dsphere_createdAt_1";
     private static final String CREATED_AT_SORT_INDEX_NAME = "createdAt_1";
     private static final String REQUEST_ID_SORT_INDEX_NAME = "requestId_1_createdAt_1";
+    
+    @Autowired
+    public MongoWarehouseServiceImpl(MongoClientLookup mongoClientLookup) {
+    	this.mongoClientLookup = mongoClientLookup;
+    }
+    
+    @Override
+    public boolean validateSystemName(String sysname) {
+    	//Check if there is a connection with the system name
+    	if(mongoClientLookup.lookupMongoClient(sysname) != null)
+    		return true;
+    	else
+    		return false;
+    }
 	
 	@Override
-	public List<String> executeQuery(Query query) {				
+	public List<String> executeQuery(Query query) throws InvalidQueryException {				
 		List<String> encodedRecords = null;
 		
 		//Use mongoDBConnection to execute the query
-		try {
-			BasicDBObject mongoQuery = buildMongoQuery(query);
-			DBCursor cursor = buildCursor(mongoQuery, query);
-			List<DBObject> retrievedRecords = retrieveRecords(cursor);
-			encodedRecords = encodeRecords(retrievedRecords, query);
-		} catch (InvalidQueryException e) {
-			//TODO log the exception
-		}
+
+		BasicDBObject mongoQuery = buildMongoQuery(query);
+		DBCursor cursor = buildCursor(mongoQuery, query);
+		List<DBObject> retrievedRecords = retrieveRecords(cursor);
+		encodedRecords = encodeRecords(retrievedRecords, query);
+
 		
 		return encodedRecords;
 	}
@@ -149,7 +165,8 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 			queryParams.append(" fieldNames: ").append(fieldNames);
 		}
 		
-		//TODO Getting mongo connection
+		//Get MongoClientConnection from MongoClientLookup
+		MongoClientConnection mongo = mongoClientLookup.lookupMongoClient(query.getSystemQueryName());
 		String collectionName = mongo.getConfig().collectionName;
 		DBCollection collection = mongo.getDatabase().getCollection(collectionName);
 		DBCursor cursor = (fieldNames == null) ? collection.find(mongoQuery) : collection.find(mongoQuery, fieldNames);
@@ -187,6 +204,9 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 			queryParams.append(" limit: ").append(query.getLimit());
 		}
 		
+		logger.info("Cursor built for query on: " + mongo.getConfig().systemName + " " + 
+					collectionName + " : " + mongoQuery + " , " + queryParams);
+		
 		return cursor;
 	}
 	
@@ -200,7 +220,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		} finally {
 			cursor.close();
 		}
-		
+
 		return result;
 	}
 	
@@ -234,7 +254,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 					encodedRecords.add(record);
 				
 			} else {
-				//TODO log error regarding missing encoded msg from dbObj
+				logger.error("Missing field encodedMsg for message " + dbObj);
 			}
 		}
 		

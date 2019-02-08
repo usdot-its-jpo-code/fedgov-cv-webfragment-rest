@@ -8,12 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
+import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoConfigLoader;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
@@ -22,7 +24,9 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 @Primary
 public class QueryServiceImpl implements QueryService {
 
+	private MongoConfigLoader mongoConfigLoader;
 	private WarehouseService warehouseService;
+	private static final Logger logger = Logger.getLogger(QueryServiceImpl.class.getName());
 	
 	@Autowired
 	public QueryServiceImpl(WarehouseService warehouseService) {
@@ -65,7 +69,8 @@ public class QueryServiceImpl implements QueryService {
 			//Check if there is a value for systemQueryName
 			if(query.getSystemQueryName() != null) {
 				
-				// TODO If there is a system query name provided, check it against possible system query names (provided from config)
+				if(!this.warehouseService.validateSystemName(query.getSystemQueryName()))
+					throw new InvalidQueryException("Invalid system name provided: " + query.getSystemQueryName());
 				
 			} else {
 				throw new InvalidQueryException("Missing required parameter systemQueryName: " + query.getSystemQueryName());
@@ -209,7 +214,7 @@ public class QueryServiceImpl implements QueryService {
 	}
 
 	@Override
-	public List<String> forwardQuery(Query query) {		
+	public List<String> forwardQuery(Query query) throws InvalidQueryException {		
 		//Forward the query to the warehouse service to execute and retrieve data
 		List<String> results = warehouseService.executeQuery(query);
 		return results;

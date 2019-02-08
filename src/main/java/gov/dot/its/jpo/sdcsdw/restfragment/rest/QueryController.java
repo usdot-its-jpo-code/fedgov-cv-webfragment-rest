@@ -1,6 +1,7 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.rest;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -14,12 +15,14 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositResponse;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResult;
 import gov.dot.its.jpo.sdcsdw.restfragment.services.QueryAndBundlingService;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 @RestController
 @RequestMapping("/whtools/rest/v2")
 public class QueryController {
 	
 	private QueryAndBundlingService queryAndBundle;
+	private static final Logger logger = Logger.getLogger(QueryController.class.getName());
 	
 	@Autowired
 	public QueryController (QueryAndBundlingService queryAndBundle) {
@@ -35,7 +38,12 @@ public class QueryController {
 	public QueryResult query(@RequestBody Query query) {
 		
 		// Use combined service to get the results
-		List<T> results = queryAndBundle.queryAndBundle(query);
+		try {
+			QueryResult result = queryAndBundle.queryAndBundle(query);
+		} catch (InvalidQueryException e) {
+			
+		}
+
 		return null;
 	}
 }
