@@ -36,7 +36,6 @@ public class BundlingServiceTest {
 
 		DialogID expectedDialog = new DialogID();
 		expectedDialog.setAdvSitDatDist("");
-		query.setDialogId(expectedDialog.getDialogId());
 
 		assertEquals(81, bundlingService.createBundleList(asdList, query).size());
 	}
@@ -61,7 +60,6 @@ public class BundlingServiceTest {
 
 		DialogID expectedDialog = new DialogID();
 		expectedDialog.setAdvSitDatDist("");
-		query.setDialogId(expectedDialog.getDialogId());
 
 		assertEquals(21, bundlingService.createDistributionList(asdList, query).size());
 	}
