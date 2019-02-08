@@ -3,7 +3,8 @@ package gov.dot.its.jpo.sdcsdw.restfragment.services;
 import java.text.ParseException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 public class QueryServiceImpl implements QueryService {
 
 	private WarehouseService warehouseService;
-	private static final Logger logger = Logger.getLogger(QueryServiceImpl.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(QueryServiceImpl.class);
 	
 	@Autowired
 	public QueryServiceImpl(WarehouseService warehouseService) {

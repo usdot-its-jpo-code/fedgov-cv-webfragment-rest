@@ -33,7 +33,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 public class QueryController {
 
     
-  private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
 	private QueryAndBundlingService queryAndBundle;
 	
 	@Autowired

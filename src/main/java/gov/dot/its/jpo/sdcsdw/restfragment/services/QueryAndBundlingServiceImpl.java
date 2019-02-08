@@ -9,7 +9,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 
 	private QueryService queryService;
 	private BundlingService bundleService;
-	private final static Logger logger = Logger.getLogger(QueryAndBundlingServiceImpl.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(QueryAndBundlingServiceImpl.class);
 	
 	@Autowired
 	public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService) {

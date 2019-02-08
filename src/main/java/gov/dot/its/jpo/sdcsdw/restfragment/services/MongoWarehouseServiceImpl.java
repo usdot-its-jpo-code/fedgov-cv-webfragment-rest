@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 public class MongoWarehouseServiceImpl implements WarehouseService {
 
 	private MongoClientLookup mongoClientLookup;
-	private static final Logger logger = Logger.getLogger(MongoWarehouseServiceImpl.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(MongoWarehouseServiceImpl.class);
 	
 	//Required index names which must match index names on each MongoDB collection
 	private static final String NO_SORT_INDEX_NAME = "region_2dsphere_createdAt_1";

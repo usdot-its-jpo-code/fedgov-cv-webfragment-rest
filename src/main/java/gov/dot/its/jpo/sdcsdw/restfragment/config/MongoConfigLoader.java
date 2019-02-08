@@ -2,7 +2,8 @@ package gov.dot.its.jpo.sdcsdw.restfragment.config;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.server.utils.ConfigurationExcep
 public class MongoConfigLoader {
 
 	private MongoConfigFileProperty mongoConfigFileProperty;
-	private static final Logger logger = Logger.getLogger(MongoConfigLoader.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(MongoConfigLoader.class);
 	
 	/**
 	 * Constructor
