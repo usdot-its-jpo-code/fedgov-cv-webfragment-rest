@@ -16,7 +16,6 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryAndBundlingService {
 	
-	//This could change, figure out what the type of list is
 	public QueryResult queryAndBundle(Query query) throws CodecFailedException, FormattingFailedException, 
 				UnformattingFailedException, IOException, DecoderException, JAXBException, InvalidQueryException;
 }

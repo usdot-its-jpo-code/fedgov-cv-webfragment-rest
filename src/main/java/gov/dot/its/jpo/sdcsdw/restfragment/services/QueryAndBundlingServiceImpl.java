@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +54,21 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		queryService.setDefaults(query);
 		queryService.validateQuery(query);
 		
-		//Perform the query. The results returned are encoded based on the 
-		//resultEncoding parameter in the query (i.e., full, base64, hex)
-		List<String> queryResults = queryService.forwardQuery(query);
+		//Perform the query, getting a list of JSON objects 
+		List<JSONObject> queryResults = queryService.forwardQuery(query);
 		
-		//Check the result packaging query parameter. If none, package into
+		//Pass query results to bundling service
+		List<JSONObject> postPackageResults = bundleService.bundleOrDistribute(queryResults, query.getResultPackaging(), query.getDialogId());
+		
+		//Pass the packaged results to the encoding service
+		List<JSONObject> postEncodedResults = encodeResults(postPackageResults, query.getResultEncoding());
+		
+		//Wrap the post encoded results in a QueryResult object and return
+		QueryResult qr = new QueryResult();
+		qr.setResults(postEncodedResults);
+		return qr;
+		
+/*		//Check the result packaging query parameter. If none, package into
 		//QueryResults and return. If packaging is bundle or distribution,
 		//format the results into AdvisorySituationData objects, and call
 		//bundling service.
@@ -70,11 +81,11 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 			List<AdvisorySituationData> asdList = convertResultsToASDList(queryResults, query);
 			
 			//Call BundleService to get bundle or distribution
-			if(query.getResultPackaging().equals("bundle"))
-				this.bundleService.createBundleList(asdList, query);
+			//if(query.getResultPackaging().equals("bundle"))
+				//this.bundleService.createBundleList(asdList, query);
 			
-			if(query.getResultPackaging().equals("distribution"))
-				this.bundleService.createDistributionList(asdList, query);
+			//if(query.getResultPackaging().equals("distribution"))
+				//this.bundleService.createDistributionList(asdList, query);
 			
 			//Requires converting bundle/distribution to string
 			
@@ -83,10 +94,10 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		}
 		
 		
-		return qr;
+		return qr;*/
 	}
 	
-	private List<AdvisorySituationData> convertResultsToASDList(List<String> queryResults, Query query) throws IOException, DecoderException, 
+	/*private List<AdvisorySituationData> convertResultsToASDList(List<String> queryResults, Query query) throws IOException, DecoderException, 
 				CodecFailedException, FormattingFailedException, UnformattingFailedException, JAXBException {
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
@@ -136,7 +147,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		AdvisorySituationData asd = null;
 		byte[] hexEncodedASDAsByte = null;
 		try {
-			hexEncodedASDAsByte = Hex.decodeHex(hexEncodedASD);
+			hexEncodedASDAsByte = Hex.decodeHex(hexEncodedASD.toCharArray());
 		} catch (DecoderException e) {
 			logger.error("Unable to decode message from hex to byte", e);
 			throw e;
@@ -156,6 +167,6 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService{
 		}
 		
 		return asd;
-	}
+	}*/
 	
 }

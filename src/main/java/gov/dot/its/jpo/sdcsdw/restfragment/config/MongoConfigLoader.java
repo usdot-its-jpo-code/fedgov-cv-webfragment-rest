@@ -19,6 +19,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.server.utils.ConfigurationExcep
 public class MongoConfigLoader {
 
 	private MongoConfigFileProperty mongoConfigFileProperty;
+	private List<MongoConfig> configList;
 	private static final Logger logger = LoggerFactory.getLogger(MongoConfigLoader.class);
 	
 	/**
@@ -26,8 +27,14 @@ public class MongoConfigLoader {
 	 * @param mongoConfigFileProperty
 	 */
 	@Autowired
-	public MongoConfigLoader(MongoConfigFileProperty mongoConfigFileProperty) {
+	public MongoConfigLoader(MongoConfigFileProperty mongoConfigFileProperty) throws ConfigurationException {
 		this.mongoConfigFileProperty = mongoConfigFileProperty;
+		try {
+			configList = ConfigUtils.loadConfigBeanList(this.mongoConfigFileProperty.getMongoConfigFilePropertyValue(), MongoConfig.class);
+		} catch (ConfigurationException e) {
+			logger.error("Error loading Mongo config list", e);
+			throw e;
+		}
 	}
 	
 	/**
@@ -35,14 +42,6 @@ public class MongoConfigLoader {
 	 * @return list of MongoConfig
 	 */
 	public List<MongoConfig> getMongoConfigList() {
-		
-		List<MongoConfig> configList = null;
-		
-		try {
-			configList = ConfigUtils.loadConfigBeanList(mongoConfigFileProperty.getMongoConfigFilePropertyValue(), MongoConfig.class);
-		} catch (ConfigurationException e) {
-			logger.error("Error loading Mongo config list", e);
-		}
 		
 		return configList;
 	}

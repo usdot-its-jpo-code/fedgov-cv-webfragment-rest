@@ -4,9 +4,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,25 +45,21 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     }
 	
 	@Override
-	public List<String> executeQuery(Query query) throws InvalidQueryException {				
-		List<String> encodedRecords = null;
+	public List<JSONObject> executeQuery(Query query) throws InvalidQueryException {
 		
-		//Use mongoDBConnection to execute the query
 		//Check that system name is valid
-		checkValidSystemName(query);
+		checkValidSystemName(query.getSystemQueryName());
 		BasicDBObject mongoQuery = buildMongoQuery(query);
 		DBCursor cursor = buildCursor(mongoQuery, query);
 		List<DBObject> retrievedRecords = retrieveRecords(cursor);
-		encodedRecords = encodeRecords(retrievedRecords, query);
-
+		List<JSONObject> recordsAsJson = convertToJsonObject(retrievedRecords);
 		
-		return encodedRecords;
+		return recordsAsJson;
 	}
 	
-	private void checkValidSystemName(Query query) throws InvalidQueryException {
-		String systemName = query.getSystemQueryName();
+	private void checkValidSystemName(String systemName) throws InvalidQueryException {
 		if(mongoClientLookup.lookupMongoClient(systemName) == null)
-			throw new InvalidQueryException("Invalid system name provided: " + query.getSystemQueryName());
+			throw new InvalidQueryException("Invalid system name provided: " + systemName);
 	}
 	
 	private BasicDBObject buildMongoQuery(Query query) throws InvalidQueryException {
@@ -223,7 +221,17 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		return result;
 	}
 	
-	public List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
+	private List<JSONObject> convertToJsonObject(List<DBObject> records) {
+		List<JSONObject> converted = new ArrayList<JSONObject>();
+		for(DBObject dbobj : records) {
+			Map asMap = dbobj.toMap();
+			JSONObject asJson = new JSONObject(asMap);
+			converted.add(asJson);
+		}
+		return converted;
+	}
+	
+	/*public List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
 		
 		//The list for encoded records. All records in the list will have the same encoding based on the
 		//query's specified result encoding. This is either full, base64, or hex.
@@ -258,5 +266,5 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 		}
 		
 		return encodedRecords;
-	}
+	}*/
 }

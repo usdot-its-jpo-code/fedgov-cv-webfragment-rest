@@ -2,6 +2,8 @@ package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
 import java.util.List;
 
+import org.json.JSONObject;
+
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
@@ -15,5 +17,5 @@ public interface QueryService {
 	public void validateQuery(Query query) throws InvalidQueryException;
 	
 	//Execute the query
-	public List<String> forwardQuery(Query query) throws InvalidQueryException;
+	public List<JSONObject> forwardQuery(Query query) throws InvalidQueryException;
 }

@@ -3,6 +3,7 @@ package gov.dot.its.jpo.sdcsdw.restfragment.services;
 import java.text.ParseException;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,9 +201,9 @@ public class QueryServiceImpl implements QueryService {
 	}
 
 	@Override
-	public List<String> forwardQuery(Query query) throws InvalidQueryException {		
+	public List<JSONObject> forwardQuery(Query query) throws InvalidQueryException {		
 		//Forward the query to the warehouse service to execute and retrieve data
-		List<String> results = warehouseService.executeQuery(query);
+		List<JSONObject> results = warehouseService.executeQuery(query);
 		return results;
 	}
 }

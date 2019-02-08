@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  * Utility class containing valid query options and defaults.
- * @author dg31036
  *
  */
 public class QueryOptions {

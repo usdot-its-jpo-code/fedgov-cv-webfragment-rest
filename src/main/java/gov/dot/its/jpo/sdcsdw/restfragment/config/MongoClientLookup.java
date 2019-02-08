@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
-import gov.dot.its.jpo.sdcsdw.websocketsfragment.server.utils.ConfigurationException;
 
 /**
  * Establish Mongo connections based on Mongo configuration file and create
@@ -28,15 +27,14 @@ public class MongoClientLookup {
 	@Autowired
 	public MongoClientLookup(MongoConfigLoader mongoConfigLoader) {
 		this.mongoConfigLoader = mongoConfigLoader;
-		this.connections = initializeConnections(this.mongoConfigLoader);
+		this.connections = initializeConnections(this.mongoConfigLoader.getMongoConfigList());
 	}
 	
 	/**
 	 * Initialize Mongo connections based on the MongoConfigLoader's list of configurations
 	 */
-	private Map<String, MongoClientConnection> initializeConnections(MongoConfigLoader mongoConfigLoader) {
-		//Get list of MongoConfig
-		List<MongoConfig> configList = mongoConfigLoader.getMongoConfigList();
+	private static Map<String, MongoClientConnection> initializeConnections(List<MongoConfig> configList) {
+
 		Map<String, MongoClientConnection> connections = new HashMap<String, MongoClientConnection>();
 		
 		//For each config, create a new connection, connect, and put in the map to associate
