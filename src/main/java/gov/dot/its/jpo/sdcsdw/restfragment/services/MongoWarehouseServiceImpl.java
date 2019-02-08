@@ -40,22 +40,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     public MongoWarehouseServiceImpl(MongoClientLookup mongoClientLookup) {
     	this.mongoClientLookup = mongoClientLookup;
     }
-    
-    @Override
-    public boolean validateSystemName(String sysname) {
-    	//Check if there is a connection with the system name
-    	if(mongoClientLookup.lookupMongoClient(sysname) != null)
-    		return true;
-    	else
-    		return false;
-    }
 	
 	@Override
 	public List<String> executeQuery(Query query) throws InvalidQueryException {				
 		List<String> encodedRecords = null;
 		
 		//Use mongoDBConnection to execute the query
-
+		//Check that system name is valid
+		checkValidSystemName(query);
 		BasicDBObject mongoQuery = buildMongoQuery(query);
 		DBCursor cursor = buildCursor(mongoQuery, query);
 		List<DBObject> retrievedRecords = retrieveRecords(cursor);
@@ -63,6 +55,12 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
 
 		
 		return encodedRecords;
+	}
+	
+	private void checkValidSystemName(Query query) throws InvalidQueryException {
+		String systemName = query.getSystemQueryName();
+		if(mongoClientLookup.lookupMongoClient(systemName) == null)
+			throw new InvalidQueryException("Invalid system name provided: " + query.getSystemQueryName());
 	}
 	
 	private BasicDBObject buildMongoQuery(Query query) throws InvalidQueryException {

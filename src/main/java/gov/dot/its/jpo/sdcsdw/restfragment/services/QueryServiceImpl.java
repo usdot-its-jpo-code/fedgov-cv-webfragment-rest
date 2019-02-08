@@ -24,7 +24,6 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 @Primary
 public class QueryServiceImpl implements QueryService {
 
-	private MongoConfigLoader mongoConfigLoader;
 	private WarehouseService warehouseService;
 	private static final Logger logger = Logger.getLogger(QueryServiceImpl.class.getName());
 	
@@ -67,14 +66,8 @@ public class QueryServiceImpl implements QueryService {
 			
 			//REQUIRED: systemQueryName
 			//Check if there is a value for systemQueryName
-			if(query.getSystemQueryName() != null) {
-				
-				if(!this.warehouseService.validateSystemName(query.getSystemQueryName()))
-					throw new InvalidQueryException("Invalid system name provided: " + query.getSystemQueryName());
-				
-			} else {
+			if(query.getSystemQueryName() == null)
 				throw new InvalidQueryException("Missing required parameter systemQueryName: " + query.getSystemQueryName());
-			}
 			
 			//REQUIRED: dialogId
 			//Check if there is a value for dialogId

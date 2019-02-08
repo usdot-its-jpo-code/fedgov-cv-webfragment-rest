@@ -10,7 +10,4 @@ public interface WarehouseService {
 
 	//Execute the query on data store
 	public List<String> executeQuery(Query query) throws InvalidQueryException;
-	
-	//Check if system name is valid
-	public boolean validateSystemName(String sysname);
 }

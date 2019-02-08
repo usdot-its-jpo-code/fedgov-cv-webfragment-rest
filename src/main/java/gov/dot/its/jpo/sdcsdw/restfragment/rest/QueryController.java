@@ -40,7 +40,7 @@ public class QueryController {
 		// Use combined service to get the results
 		try {
 			QueryResult result = queryAndBundle.queryAndBundle(query);
-		} catch (InvalidQueryException e) {
+		} catch (Exception e) {
 			
 		}
 
