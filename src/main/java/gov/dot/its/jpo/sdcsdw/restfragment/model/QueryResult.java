@@ -2,8 +2,6 @@ package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class QueryResult {
