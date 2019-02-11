@@ -1,11 +1,9 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
 import java.io.IOException;
-<<<<<<< HEAD
+
 import java.util.ArrayList;
 import java.util.Arrays;
-=======
->>>>>>> rest-interface
 import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
