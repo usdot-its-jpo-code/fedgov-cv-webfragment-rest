@@ -9,8 +9,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +51,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
     @Override
     public QueryResult queryAndBundle(Query query) throws CodecFailedException,
             FormattingFailedException, UnformattingFailedException, IOException,
-            DecoderException, JAXBException, InvalidQueryException, JSONException {
+            DecoderException, JAXBException, InvalidQueryException {
 
         // Set default query values, if necessary, and perform query validation
         queryService.setDefaults(query);
