@@ -10,10 +10,13 @@ import javax.xml.bind.JAXBException;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
 import gov.dot.its.jpo.sdcsdw.Models.DialogID;
@@ -43,11 +46,11 @@ public class BundlingServiceTest {
 		expectedDialog.setAdvSitDatDist("");
 		query.setDialogId(expectedDialog.getDialogId());
 		
-		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		List<JsonNode> jsonList = new ArrayList<JsonNode>();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(new JSONObject(mapper.writeValueAsString(asd)));
+			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
 		}
 
 		assertEquals(81, bundlingService.bundleOrDistribute(jsonList, "bundle", query.getDialogId()).size());
@@ -74,11 +77,11 @@ public class BundlingServiceTest {
 		expectedDialog.setAdvSitDatDist("");
 		query.setDialogId(expectedDialog.getDialogId());
 		
-		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		List<JsonNode> jsonList = new ArrayList<JsonNode>();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(new JSONObject(mapper.writeValueAsString(asd)));
+			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
 		}
 
 		assertEquals(21, bundlingService.bundleOrDistribute(jsonList, "distribution", query.getDialogId()).size());
@@ -106,11 +109,11 @@ public class BundlingServiceTest {
 		expectedDialog.setAdvSitDatDist("");
 		query.setDialogId(expectedDialog.getDialogId());
 		
-		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		List<JsonNode> jsonList = new ArrayList<JsonNode>();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(new JSONObject(mapper.writeValueAsString(asd)));
+			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
 		}
 
 		assertEquals(0, bundlingService.bundleOrDistribute(jsonList, "bundle", query.getDialogId()).size());
@@ -138,12 +141,11 @@ public class BundlingServiceTest {
 		expectedDialog.setAdvSitDatDist("");
 		query.setDialogId(expectedDialog.getDialogId());
 		
-		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		List<JsonNode> jsonList = new ArrayList<JsonNode>();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(new JSONObject(mapper.writeValueAsString(asd)));
-			System.out.println(mapper.writeValueAsString(asd));
+			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
 		}
 
 		assertEquals(1, bundlingService.bundleOrDistribute(jsonList, "distribution", query.getDialogId()).size());

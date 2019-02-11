@@ -33,13 +33,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BundlingServiceImpl implements BundlingService {
 	@Override
-	public List<JsonNode> bundleOrDistribute(List<JSONObject> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
 		List<JsonNode> returnJsons = new ArrayList<JsonNode>();
 		
-		for (JSONObject json : jsonList) {
+		for (JsonNode json : jsonList) {
 			AdvisorySituationData asd = mapper.readValue(json.toString(), AdvisorySituationData.class);
 			asdList.add(asd);
 		}
