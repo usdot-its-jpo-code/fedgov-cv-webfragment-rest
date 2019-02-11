@@ -43,7 +43,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
     private final static Logger logger = LoggerFactory.getLogger(QueryAndBundlingServiceImpl.class);
 
     @Autowired
-    public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService) {
+    public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService, EncoderService encoderService) {
         this.queryService = queryService;
         this.bundleService = bundleService;
         this.encoderService = encoderService;
