@@ -114,12 +114,7 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20090211</version>
-    </dependency>
+ 
 
     <dependency>
 			<groupId>gov.dot.its.jpo.sdcsdw</groupId>

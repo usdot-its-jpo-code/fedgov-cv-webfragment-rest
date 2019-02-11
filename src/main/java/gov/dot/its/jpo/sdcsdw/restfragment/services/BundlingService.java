@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.json.JSONException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 
 public interface BundlingService {
-	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogID) throws JsonParseException, JsonMappingException, IOException, JSONException;
+	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogID) throws JsonParseException, JsonMappingException, IOException;
 }

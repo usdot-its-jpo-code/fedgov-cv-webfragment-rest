@@ -17,8 +17,6 @@ import gov.dot.its.jpo.sdcsdw.Models.AsdBundles;
 import gov.dot.its.jpo.sdcsdw.Models.DialogID;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,30 +27,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BundlingServiceImpl implements BundlingService {
 	@Override
-	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
 		List<JsonNode> returnJsons = new ArrayList<JsonNode>();
 		
 		for (JsonNode json : jsonList) {
-			AdvisorySituationData asd = mapper.readValue(json.toString(), AdvisorySituationData.class);
+			AdvisorySituationData asd = mapper.treeToValue(json, AdvisorySituationData.class);
 			asdList.add(asd);
 		}
 		
 		if (packageType.equals("bundle")) {
 			List<AdvisorySituationBundle> bundleList = createBundleList(asdList, dialogId);
 			
-			for (AdvisorySituationBundle bundle : bundleList) {		
-				JSONObject json = new JSONObject(mapper.writeValueAsString(bundle));
-				returnJsons.add(mapper.readTree(json.toString()));
+			for (AdvisorySituationBundle bundle : bundleList) {
+				returnJsons.add(mapper.valueToTree(bundle));
 			}
 		} else {
 			List<AdvisorySituationDataDistribution> distributionList = createDistributionList(asdList, dialogId);
 			
 			for (AdvisorySituationDataDistribution distribution : distributionList) {
-				JSONObject json = new JSONObject(mapper.writeValueAsString(distribution));
-				returnJsons.add(mapper.readTree(json.toString()));
+				returnJsons.add(mapper.valueToTree(distribution));
 			}
 		}
 		

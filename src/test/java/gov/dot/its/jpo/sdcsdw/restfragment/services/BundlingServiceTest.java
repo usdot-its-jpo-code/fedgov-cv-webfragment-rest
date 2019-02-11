@@ -11,8 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,7 +26,7 @@ public class BundlingServiceTest {
 	private BundlingService bundlingService = new BundlingServiceImpl();
  
 	@Test
-	public void testBundles() throws JsonGenerationException, JsonMappingException, JSONException, IOException {
+	public void testBundles() throws JsonGenerationException, JsonMappingException, IOException {
 		Query query = new Query();
 
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
@@ -50,7 +49,7 @@ public class BundlingServiceTest {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
+			jsonList.add(mapper.valueToTree(asd));
 		}
 
 		assertEquals(81, bundlingService.bundleOrDistribute(jsonList, "bundle", query.getDialogId()).size());
@@ -58,7 +57,7 @@ public class BundlingServiceTest {
 	
 
 	@Test
-	public void testDistributions() throws JsonGenerationException, JsonMappingException, JSONException, IOException {
+	public void testDistributions() throws JsonGenerationException, JsonMappingException, IOException {
 		Query query = new Query();
 
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
@@ -81,7 +80,7 @@ public class BundlingServiceTest {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
+			jsonList.add(mapper.valueToTree(asd));
 		}
 
 		assertEquals(21, bundlingService.bundleOrDistribute(jsonList, "distribution", query.getDialogId()).size());
@@ -89,7 +88,7 @@ public class BundlingServiceTest {
 	
 
 	@Test
-	public void testBundlesSingleEmptyASD() throws JsonGenerationException, JsonMappingException, JSONException, IOException {
+	public void testBundlesSingleEmptyASD() throws JsonGenerationException, JsonMappingException, IOException {
 		Query query = new Query();
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
@@ -113,7 +112,7 @@ public class BundlingServiceTest {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
+			jsonList.add(mapper.valueToTree(asd));
 		}
 
 		assertEquals(0, bundlingService.bundleOrDistribute(jsonList, "bundle", query.getDialogId()).size());
@@ -121,7 +120,7 @@ public class BundlingServiceTest {
 
 
 	@Test
-	public void testDistributionsSingleEmptyASD() throws JsonGenerationException, JsonMappingException, JSONException, IOException {
+	public void testDistributionsSingleEmptyASD() throws JsonGenerationException, JsonMappingException, IOException {
 		Query query = new Query();
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
@@ -145,7 +144,7 @@ public class BundlingServiceTest {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		for (AdvisorySituationData asd : asdList) {
-			jsonList.add(mapper.readTree(new JSONObject(mapper.writeValueAsString(asd)).toString()));
+			jsonList.add(mapper.valueToTree(asd));
 		}
 
 		assertEquals(1, bundlingService.bundleOrDistribute(jsonList, "distribution", query.getDialogId()).size());
