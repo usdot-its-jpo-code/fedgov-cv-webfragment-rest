@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-
+import org.springframework.stereotype.Service;
 
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationBundle;
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-
+@Service
 public class BundlingServiceImpl implements BundlingService {
 	@Override
 	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException {
