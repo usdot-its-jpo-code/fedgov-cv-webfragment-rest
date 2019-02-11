@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.DecoderException;
+import org.json.JSONException;
 
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.FormattingFailedException;
@@ -18,5 +19,5 @@ public interface QueryAndBundlingService {
 
     public QueryResult queryAndBundle(Query query) throws CodecFailedException,
             FormattingFailedException, UnformattingFailedException, IOException,
-            DecoderException, JAXBException, InvalidQueryException;
+            DecoderException, JAXBException, InvalidQueryException, JSONException;
 }

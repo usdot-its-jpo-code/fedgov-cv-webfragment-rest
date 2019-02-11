@@ -1,5 +1,6 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
@@ -46,14 +49,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public List<JSONObject> executeQuery(Query query) throws InvalidQueryException {
+    public List<JsonNode> executeQuery(Query query) throws InvalidQueryException, IOException {
 
         // Check that system name is valid
         checkValidSystemName(query.getSystemQueryName());
         BasicDBObject mongoQuery = buildMongoQuery(query);
         DBCursor cursor = buildCursor(mongoQuery, query);
         List<DBObject> retrievedRecords = retrieveRecords(cursor);
-        List<JSONObject> recordsAsJson = convertToJsonObject(retrievedRecords);
+        List<JsonNode> recordsAsJson = convertToJsonNodes(retrievedRecords);
 
         return recordsAsJson;
     }
@@ -235,14 +238,20 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
         return result;
     }
 
-    private List<JSONObject> convertToJsonObject(List<DBObject> records) {
-        List<JSONObject> converted = new ArrayList<JSONObject>();
+    private List<JsonNode> convertToJsonNodes(List<DBObject> records) throws IOException {
+        List<JsonNode> jsonNodes = new ArrayList<JsonNode>();
+        ObjectMapper mapper = new ObjectMapper();
         for (DBObject dbobj : records) {
-            Map asMap = dbobj.toMap();
-            JSONObject asJson = new JSONObject(asMap);
-            converted.add(asJson);
+            JsonNode jsonNode;
+            try {
+                jsonNode = mapper.readTree(dbobj.toString());
+            } catch (IOException e) {
+                logger.error("Error converting Mongo object to JSON with object: " + dbobj.toString());
+                throw e;
+            }
+            jsonNodes.add(jsonNode);
         }
-        return converted;
+        return jsonNodes;
     }
 
     /*
