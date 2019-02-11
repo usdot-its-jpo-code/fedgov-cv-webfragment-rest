@@ -15,7 +15,8 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResult;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryAndBundlingService {
-	
-	public QueryResult queryAndBundle(Query query) throws CodecFailedException, FormattingFailedException, 
-				UnformattingFailedException, IOException, DecoderException, JAXBException, InvalidQueryException;
+
+    public QueryResult queryAndBundle(Query query) throws CodecFailedException,
+            FormattingFailedException, UnformattingFailedException, IOException,
+            DecoderException, JAXBException, InvalidQueryException;
 }

@@ -1,6 +1,5 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.rest;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,32 +31,33 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 @RequestMapping("/v2")
 public class QueryController {
 
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryController.class);
-	private QueryAndBundlingService queryAndBundle;
-	
-	@Autowired
-	public QueryController (QueryAndBundlingService queryAndBundle) {
-		this.queryAndBundle = queryAndBundle;
-	}
-	
-	@RequestMapping(value="/deposit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public DepositResponse deposit(@RequestBody DepositRequest request) {
-		return null;
-	}
-	
-	@RequestMapping(value="/query", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public QueryResult query(@RequestBody Query query) throws CodecFailedException, FormattingFailedException, UnformattingFailedException, 
-					IOException, DecoderException, JAXBException, InvalidQueryException {
-		
-		// Use combined service to get the results
-		QueryResult result = queryAndBundle.queryAndBundle(query);
+    private QueryAndBundlingService queryAndBundle;
 
-		return result;
-	}
-	
-	@GetMapping("/health")
-	public String health() {
-	    return "alive";
-	}
+    @Autowired
+    public QueryController(QueryAndBundlingService queryAndBundle) {
+        this.queryAndBundle = queryAndBundle;
+    }
+
+    @RequestMapping(value = "/deposit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public DepositResponse deposit(@RequestBody DepositRequest request) {
+        return null;
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public QueryResult query(@RequestBody Query query)
+            throws CodecFailedException, FormattingFailedException,
+            UnformattingFailedException, IOException, DecoderException,
+            JAXBException, InvalidQueryException {
+
+        // Use combined service to get the results
+        QueryResult result = queryAndBundle.queryAndBundle(query);
+
+        return result;
+    }
+
+    @GetMapping("/health")
+    public String health() {
+        return "alive";
+    }
 }

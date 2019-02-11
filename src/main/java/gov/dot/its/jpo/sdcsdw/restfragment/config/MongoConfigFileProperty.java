@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class MongoConfigFileProperty {
 
-	@Value("${mongoConfigFile}")
-	private String mongoConfigFilePropertyValue;
-	
-	/**
-	 * Returns the property value for the Mongo configuration file
-	 * @return String of the property value
-	 */
-	public String getMongoConfigFilePropertyValue() {
-		return mongoConfigFilePropertyValue;
-	}
+    @Value("${mongoConfigFile}")
+    private String mongoConfigFilePropertyValue;
+
+    /**
+     * Returns the property value for the Mongo configuration file
+     * 
+     * @return String of the property value
+     */
+    public String getMongoConfigFilePropertyValue() {
+        return mongoConfigFilePropertyValue;
+    }
 }

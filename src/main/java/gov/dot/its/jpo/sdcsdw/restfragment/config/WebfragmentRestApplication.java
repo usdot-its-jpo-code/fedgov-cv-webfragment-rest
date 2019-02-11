@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 //		"gov.dot.its.jpo.sdcsdw.restfragment.services"})
 public class WebfragmentRestApplication {
 
-//	public static void main(String[] args) {
-//		SpringApplication.run(WebfragmentRestApplication.class, args);
-//	}
+    // public static void main(String[] args) {
+    // SpringApplication.run(WebfragmentRestApplication.class, args);
+    // }
 }

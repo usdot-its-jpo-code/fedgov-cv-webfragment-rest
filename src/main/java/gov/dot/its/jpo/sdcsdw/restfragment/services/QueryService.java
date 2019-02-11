@@ -10,12 +10,12 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryService {
 
-	//Set defaults
-	public void setDefaults(Query query);
-	
-	//Validate query
-	public void validateQuery(Query query) throws InvalidQueryException;
-	
-	//Execute the query
-	public List<JSONObject> forwardQuery(Query query) throws InvalidQueryException;
+    // Set defaults
+    public void setDefaults(Query query);
+
+    // Validate query
+    public void validateQuery(Query query) throws InvalidQueryException;
+
+    // Execute the query
+    public List<JSONObject> forwardQuery(Query query) throws InvalidQueryException;
 }

@@ -10,6 +10,6 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface WarehouseService {
 
-	//Execute the query on data store
-	public List<JSONObject> executeQuery(Query query) throws InvalidQueryException;
+    // Execute the query on data store
+    public List<JSONObject> executeQuery(Query query) throws InvalidQueryException;
 }
