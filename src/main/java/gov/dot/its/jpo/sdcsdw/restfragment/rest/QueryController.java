@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.DecoderException;
-
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +48,7 @@ public class QueryController {
     public QueryResult query(@RequestBody Query query)
             throws CodecFailedException, FormattingFailedException,
             UnformattingFailedException, IOException, DecoderException,
-            JAXBException, InvalidQueryException {
+            JAXBException, InvalidQueryException, JSONException {
 
         // Use combined service to get the results
         QueryResult result = queryAndBundle.queryAndBundle(query);
