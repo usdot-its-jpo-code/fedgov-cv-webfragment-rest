@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.JsonMappingException;
 
 
@@ -18,7 +15,6 @@ import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistribution;
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistributionList;
 import gov.dot.its.jpo.sdcsdw.Models.AsdBundles;
 import gov.dot.its.jpo.sdcsdw.Models.DialogID;
-import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 
 import org.json.JSONException;
