@@ -1,8 +1,11 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
@@ -17,5 +20,5 @@ public interface QueryService {
     public void validateQuery(Query query) throws InvalidQueryException;
 
     // Execute the query
-    public List<JSONObject> forwardQuery(Query query) throws InvalidQueryException;
+    public List<JsonNode> forwardQuery(Query query) throws InvalidQueryException, IOException;
 }

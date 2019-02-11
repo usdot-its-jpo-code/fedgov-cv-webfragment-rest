@@ -57,13 +57,13 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
         queryService.validateQuery(query);
 
         // Perform the query, getting a list of JSON objects
-        List<JSONObject> queryResults = queryService.forwardQuery(query);
+        List<JsonNode> queryResults = queryService.forwardQuery(query);
 
         // Pass query results to bundling service
-        List<JSONObject> postPackageResults = bundleService.bundleOrDistribute(queryResults, query.getResultPackaging(), query.getDialogId());
+        List<JsonNode> postPackageResults = bundleService.bundleOrDistribute(queryResults, query.getResultPackaging(), query.getDialogId());
 
         // Pass the packaged results to the encoding service
-        List<JSONObject> postEncodedResults = encodeResults(postPackageResults, query.getResultEncoding());
+        List<JsonNode> postEncodedResults = encodeResults(postPackageResults, query.getResultEncoding());
 
         // Wrap the post encoded results in a QueryResult object and return
         QueryResult qr = new QueryResult();
