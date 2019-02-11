@@ -10,7 +10,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+
 
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationBundle;
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationData;
@@ -24,17 +24,20 @@ import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 
 
 public class BundlingServiceImpl implements BundlingService {
 	@Override
-	public List<JSONObject> bundleOrDistribute(List<JSONObject> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public List<JsonNode> bundleOrDistribute(List<JSONObject> jsonList, String packageType, String dialogId) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		List<AdvisorySituationData> asdList = new ArrayList<AdvisorySituationData>();
-		List<JSONObject> returnJsons = new ArrayList<JSONObject>();
+		List<JsonNode> returnJsons = new ArrayList<JsonNode>();
 		
 		for (JSONObject json : jsonList) {
 			AdvisorySituationData asd = mapper.readValue(json.toString(), AdvisorySituationData.class);
@@ -46,14 +49,14 @@ public class BundlingServiceImpl implements BundlingService {
 			
 			for (AdvisorySituationBundle bundle : bundleList) {		
 				JSONObject json = new JSONObject(mapper.writeValueAsString(bundle));
-				returnJsons.add(json);
+				returnJsons.add(mapper.readTree(json.toString()));
 			}
 		} else {
 			List<AdvisorySituationDataDistribution> distributionList = createDistributionList(asdList, dialogId);
 			
 			for (AdvisorySituationDataDistribution distribution : distributionList) {
 				JSONObject json = new JSONObject(mapper.writeValueAsString(distribution));
-				returnJsons.add(json);
+				returnJsons.add(mapper.readTree(json.toString()));
 			}
 		}
 		
