@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +39,21 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
 
     private QueryService queryService;
     private BundlingService bundleService;
+    private EncoderService encoderService;
     private final static Logger logger = LoggerFactory.getLogger(QueryAndBundlingServiceImpl.class);
 
     @Autowired
     public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService) {
         this.queryService = queryService;
         this.bundleService = bundleService;
+        this.encoderService = encoderService;
     }
 
     // First query through query service
     @Override
     public QueryResult queryAndBundle(Query query) throws CodecFailedException,
             FormattingFailedException, UnformattingFailedException, IOException,
-            DecoderException, JAXBException, InvalidQueryException {
+            DecoderException, JAXBException, InvalidQueryException, JSONException {
 
         // Set default query values, if necessary, and perform query validation
         queryService.setDefaults(query);
@@ -63,7 +66,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
         List<JsonNode> postPackageResults = bundleService.bundleOrDistribute(queryResults, query.getResultPackaging(), query.getDialogId());
 
         // Pass the packaged results to the encoding service
-        List<JsonNode> postEncodedResults = encodeResults(postPackageResults, query.getResultEncoding());
+        List<JsonNode> postEncodedResults = encoderService.encodeBundles(postPackageResults, query.getResultEncoding());
 
         // Wrap the post encoded results in a QueryResult object and return
         QueryResult qr = new QueryResult();
