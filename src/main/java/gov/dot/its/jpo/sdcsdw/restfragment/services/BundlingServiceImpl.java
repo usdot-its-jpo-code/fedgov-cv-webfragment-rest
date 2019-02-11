@@ -64,8 +64,7 @@ public class BundlingServiceImpl implements BundlingService {
 	}
 	
 	
-	@Override
-	public List<AdvisorySituationBundle> createBundleList(List<AdvisorySituationData> asd, String dialogId) {
+	private List<AdvisorySituationBundle> createBundleList(List<AdvisorySituationData> asd, String dialogId) {
 		List<AdvisorySituationDataDistribution> distributionList = createDistributionList(asd, dialogId);
 		List<AdvisorySituationBundle> bundleList = new ArrayList<AdvisorySituationBundle>();
 		
@@ -79,8 +78,7 @@ public class BundlingServiceImpl implements BundlingService {
 	} 
 	
 	
-	@Override
-	public List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogId) {
+	private List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogId) {
 		DialogID dialogIDObject = new DialogID();
 		
 		if (dialogId.equals("vehSitData")) {

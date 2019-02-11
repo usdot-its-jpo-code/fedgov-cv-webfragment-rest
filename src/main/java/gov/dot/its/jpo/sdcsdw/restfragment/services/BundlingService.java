@@ -17,6 +17,4 @@ import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistribution;
 
 public interface BundlingService {
 	public List<JsonNode> bundleOrDistribute(List<JsonNode> jsonList, String packageType, String dialogID) throws JsonParseException, JsonMappingException, IOException, JSONException;
-	public List<AdvisorySituationBundle> createBundleList(List<AdvisorySituationData> asd, String dialogID);
-	public List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogID);
 }
