@@ -13,5 +13,5 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.XerData;
 
 public interface EncoderService {
-	public String perToXer(String xer) throws UnformattingFailedException, CodecFailedException, FormattingFailedException;
+    public List<JsonNode> encodeBundles(List<JsonNode> jsonNodes, String resultPackaging, String resultEncoding);
 }

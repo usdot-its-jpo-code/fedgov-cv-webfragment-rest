@@ -64,7 +64,7 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
         List<JsonNode> postPackageResults = bundleService.bundleOrDistribute(queryResults, query.getResultPackaging(), query.getDialogId());
 
         // Pass the packaged results to the encoding service
-        List<JsonNode> postEncodedResults = encoderService.encodeBundles(postPackageResults, query.getResultEncoding());
+        List<JsonNode> postEncodedResults = encoderService.encodeBundles(postPackageResults, query.getResultPackaging(), query.getResultEncoding());
 
         // Wrap the post encoded results in a QueryResult object and return
         QueryResult qr = new QueryResult();
