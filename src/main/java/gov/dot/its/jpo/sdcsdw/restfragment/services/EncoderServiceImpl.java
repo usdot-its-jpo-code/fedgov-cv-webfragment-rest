@@ -15,7 +15,7 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerDataUnformatter;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.XerDataFormatter;
 
-
+@Service
 public class EncoderServiceImpl implements EncoderService {
 
 	@Override
