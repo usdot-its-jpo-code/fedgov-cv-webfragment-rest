@@ -16,6 +16,7 @@ import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistribution;
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistributionList;
 import gov.dot.its.jpo.sdcsdw.Models.AsdBundles;
 import gov.dot.its.jpo.sdcsdw.Models.DialogID;
+import gov.dot.its.jpo.sdcsdw.Models.DialogIdType;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 
 
@@ -35,7 +36,9 @@ public class BundlingServiceImpl implements BundlingService {
 		List<JsonNode> returnJsons = new ArrayList<JsonNode>();
 		
 		for (JsonNode json : jsonList) {
+			//To be changed, currently implementing alternative to this is encoding service
 			AdvisorySituationData asd = mapper.treeToValue(json, AdvisorySituationData.class);
+			
 			asdList.add(asd);
 		}
 		
@@ -74,36 +77,7 @@ public class BundlingServiceImpl implements BundlingService {
 	private List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogId) {
 		DialogID dialogIDObject = new DialogID();
 		
-		if (dialogId.equals("vehSitData")) {
-			dialogIDObject.setVehSitData("");
-		}
-		else if (dialogId.equals("dataSubsription")) {
-			dialogIDObject.setDataSubscription("");
-		}
-		else if (dialogId.equals("advSitDataDep")) {
-			dialogIDObject.setAdvSitDatDep("");
-		}
-		else if (dialogId.equals("advSitDataDist")) {
-			dialogIDObject.setAdvSitDatDist("");
-		}
-		else if (dialogId.equals("reserved1")) {
-			dialogIDObject.setReserved1("");
-		}
-		else if (dialogId.equals("reserved2")) {
-			dialogIDObject.setReserved2("");
-		}
-		else if (dialogId.equals("objReg")) {
-			dialogIDObject.setObjReg("");
-		}
-		else if (dialogId.equals("objDisc")) {
-			dialogIDObject.setObjDisc("");
-		}
-		else if (dialogId.equals("intersectionSitDataDep")) {
-			dialogIDObject.setIntersectionSitDataDep("");
-		}
-		else if (dialogId.equals("intersectionSitDataQuery")) {
-			dialogIDObject.setIntersectionSitDataQuery("");
-		}
+		dialogIDObject.setDialogId(DialogIdType.fromValue(dialogId));
 		
 		AdvisorySituationDataDistributionList distributionListObject = MessageCreator.createAdvisorySituationDataDistributionList(asd, dialogIDObject, "00 00 00 00", "00 00 00 00");
 		
