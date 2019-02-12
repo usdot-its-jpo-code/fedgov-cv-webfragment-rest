@@ -16,7 +16,6 @@ import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistribution;
 import gov.dot.its.jpo.sdcsdw.Models.AdvisorySituationDataDistributionList;
 import gov.dot.its.jpo.sdcsdw.Models.AsdBundles;
 import gov.dot.its.jpo.sdcsdw.Models.DialogID;
-import gov.dot.its.jpo.sdcsdw.Models.DialogIdType;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 
 
@@ -77,7 +76,8 @@ public class BundlingServiceImpl implements BundlingService {
 	private List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogId) {
 		DialogID dialogIDObject = new DialogID();
 		
-		dialogIDObject.setDialogId(DialogIdType.fromValue(dialogId));
+		//dialogIDObject.setDialogId(DialogIdType.fromValue(dialogId));
+		dialogIDObject.setAdvSitDatDist("");
 		
 		AdvisorySituationDataDistributionList distributionListObject = MessageCreator.createAdvisorySituationDataDistributionList(asd, dialogIDObject, "00 00 00 00", "00 00 00 00");
 		
