@@ -27,12 +27,9 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.FormattingFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.UnformattingFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.Base64PerData;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerDataFormatter;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerDataUnformatter;
+import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.SpacelessHexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.XerDataFormatter;
 import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
 @Service
@@ -69,7 +66,7 @@ public class EncoderServiceImpl implements EncoderService {
         
         switch (resultEncoding) {
         case "hex":
-            formatter = HexPerData.formatter;
+            formatter = SpacelessHexPerData.formatter;
             break;
         case "base64":
             formatter = Base64PerData.formatter;
