@@ -8,12 +8,17 @@ import java.util.List;
  */
 public class DepositOptions {
 
-    private static final List<String> encodeTypeOptions = new ArrayList<String>();
+    private static List<String> encodeTypeOptions = new ArrayList<String>();
+    
+    //The encode types as constants
+    public static final String ENCODE_TYPE_HEX = "hex";
+    public static final String ENCODE_TYPE_BASE64 = "base64";
+    public static final String ENCODE_TYPE_UPER = "uper";
     
     static {
-        encodeTypeOptions.add("hex");
-        encodeTypeOptions.add("base64");
-        encodeTypeOptions.add("uper");
+        encodeTypeOptions.add(ENCODE_TYPE_HEX);
+        encodeTypeOptions.add(ENCODE_TYPE_BASE64);
+        encodeTypeOptions.add(ENCODE_TYPE_UPER);
     }
     
     public static List<String> getEncodeTypeOptions() {

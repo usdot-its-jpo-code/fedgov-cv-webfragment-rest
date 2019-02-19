@@ -24,6 +24,7 @@ import com.mongodb.DBObject;
 
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientConnection;
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientLookup;
+import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositRequest;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
@@ -250,6 +251,12 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
             jsonNodes.add(jsonNode);
         }
         return jsonNodes;
+    }
+
+    @Override
+    public int executeDeposit(DepositRequest request) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     /*
