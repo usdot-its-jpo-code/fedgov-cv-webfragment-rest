@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
 
 /**
- * Establish Mongo connections based on Mongo configuration file and create
+ * Establish Mongo connections based on Mongo configuration files and create
  * association with system name
  *
  */
@@ -18,7 +18,10 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
 public class MongoClientLookup {
 
     private MongoConfigLoader mongoConfigLoader;
+    //Query connections
     private Map<String, MongoClientConnection> connections;
+    //Deposit connections
+    private Map<String, MongoClientConnection> depositConnections;
 
     /**
      * Constructor, initializing the connections
@@ -29,6 +32,7 @@ public class MongoClientLookup {
     public MongoClientLookup(MongoConfigLoader mongoConfigLoader) {
         this.mongoConfigLoader = mongoConfigLoader;
         this.connections = initializeConnections(this.mongoConfigLoader.getMongoConfigList());
+        this.depositConnections = initializeConnections(this.mongoConfigLoader.getMongoDepositConfigList());
     }
 
     /**
@@ -51,7 +55,7 @@ public class MongoClientLookup {
     }
 
     /**
-     * Get the Mongo connection associated with a system name
+     * Get the Mongo query connection associated with a system name
      * 
      * @param sysname
      * @return MongoClientConnection
@@ -60,5 +64,15 @@ public class MongoClientLookup {
 
         return connections.get(sysname);
 
+    }
+    
+    /**
+     * Get the Mongo deposit connection associated with a system name
+     * @param sysname
+     * @return MongoClientConnection
+     */
+    public MongoClientConnection lookupMongoDepositClient(String sysname) {
+        
+        return depositConnections.get(sysname);
     }
 }
