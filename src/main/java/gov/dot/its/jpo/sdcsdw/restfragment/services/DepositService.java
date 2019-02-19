@@ -10,7 +10,7 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
 
 public interface DepositService {
 
-    public boolean validateDeposit(DepositRequest request) throws DepositException;
+    public void validateDeposit(DepositRequest request) throws DepositException;
     
     public Document prepareDeposit(DepositRequest request) throws DepositException, DecoderException, CodecException;
     

@@ -24,7 +24,7 @@ public class MongoClientLookup {
     //Query connections
     private Map<String, MongoClientConnection> connections;
     //Deposit connections
-    private Map<String, MongoClientConnection> depositConnections;
+    private Map<String, MongoClientDepositConnection> depositConnections;
 
     /**
      * Constructor, initializing the connections
@@ -37,13 +37,9 @@ public class MongoClientLookup {
     public MongoClientLookup(MongoConfigLoader mongoConfigLoader) throws UnknownHostException, MongoException {
         this.mongoConfigLoader = mongoConfigLoader;
         this.connections = initializeConnections(this.mongoConfigLoader.getMongoConfigList());
-        this.depositConnections = initializeDepositConnections(this.mongoConfigLoader.getMongoDepositConfigList());
+        this.depositConnections = initializeDepositConnections(this.mongoConfigLoader.getMongoConfigList());
     }
 
-    /**
-     * Initialize Mongo connections based on the MongoConfigLoader's list of
-     * configurations
-     */
     private static Map<String, MongoClientConnection> initializeConnections(List<MongoConfig> configList) {
 
         Map<String, MongoClientConnection> connections = new HashMap<String, MongoClientConnection>();
@@ -59,14 +55,14 @@ public class MongoClientLookup {
         return connections;
     }
     
-    private static Map<String, MongoClientConnection> initializeDepositConnections(List<MongoConfig> configList) throws UnknownHostException, MongoException {
+    private static Map<String, MongoClientDepositConnection> initializeDepositConnections(List<MongoConfig> configList) throws UnknownHostException, MongoException {
         
-        Map<String, MongoClientConnection> connections = new HashMap<String, MongoClientConnection>();
+        Map<String, MongoClientDepositConnection> connections = new HashMap<String, MongoClientDepositConnection>();
         
         //For each config, create a new connection, connect, and put in the map
         for (MongoConfig config : configList) {
-            MongoClientConnection connection = new MongoClientConnection(config);
-            connection.connectDeposit();
+            MongoClientDepositConnection connection = new MongoClientDepositConnection(config);
+            connection.connect();
             connections.put(config.systemName, connection);
         }
         
@@ -90,7 +86,7 @@ public class MongoClientLookup {
      * @param sysname
      * @return MongoClientConnection
      */
-    public MongoClientConnection lookupMongoDepositClient(String sysname) {
+    public MongoClientDepositConnection lookupMongoDepositClient(String sysname) {
         
         return depositConnections.get(sysname);
     }

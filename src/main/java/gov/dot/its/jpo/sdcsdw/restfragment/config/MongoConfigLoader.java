@@ -21,7 +21,6 @@ public class MongoConfigLoader {
 
     private MongoConfigFileProperty mongoConfigFileProperty;
     private List<MongoConfig> configList;
-    private List<MongoConfig> depositConfigList;
     private static final Logger logger = LoggerFactory.getLogger(MongoConfigLoader.class);
 
     /**
@@ -35,7 +34,6 @@ public class MongoConfigLoader {
         this.mongoConfigFileProperty = mongoConfigFileProperty;
         try {
             configList = ConfigUtils.loadConfigBeanList(this.mongoConfigFileProperty.getMongoConfigFilePropertyValue(), MongoConfig.class);
-            depositConfigList = ConfigUtils.loadConfigBeanList(this.mongoConfigFileProperty.getMongoDepositConfigFilePropertyValue(), MongoConfig.class);
         } catch (ConfigurationException e) {
             logger.error("Error loading Mongo config list", e);
             throw e;
@@ -43,22 +41,12 @@ public class MongoConfigLoader {
     }
 
     /**
-     * Get the list of Mongo query configurations based on the query config file
+     * Get the list of Mongo configurations based on the config file
      * 
      * @return list of MongoConfig
      */
     public List<MongoConfig> getMongoConfigList() {
 
         return configList;
-    }
-    
-    /**
-     * Get the list of Mongo deposit configurations based on the deposit config file
-     * 
-     * @return list of MongoConfig
-     */
-    public List<MongoConfig> getMongoDepositConfigList() {
-        
-        return depositConfigList;
     }
 }

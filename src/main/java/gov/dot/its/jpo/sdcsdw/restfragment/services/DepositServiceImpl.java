@@ -38,7 +38,7 @@ public class DepositServiceImpl implements DepositService {
     }
     
     @Override
-    public boolean validateDeposit(DepositRequest request) throws DepositException {
+    public void validateDeposit(DepositRequest request) throws DepositException {
         
         //REQUIRED: request must have all required fields
         if(request.getSystemDepositName() != null && request.getEncodeType() != null && request.getEncodeMsg() != null) {
@@ -70,9 +70,6 @@ public class DepositServiceImpl implements DepositService {
             
             throw new DepositException(errorMsg);
         }
-
-        //If no exception is found, return true for valid deposit request
-        return true;
     }
     
     @Override

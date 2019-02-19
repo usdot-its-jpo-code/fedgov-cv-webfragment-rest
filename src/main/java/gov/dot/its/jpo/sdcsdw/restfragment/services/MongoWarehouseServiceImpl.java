@@ -22,10 +22,10 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoOptions;
 import com.mongodb.WriteResult;
 
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientConnection;
+import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientDepositConnection;
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientLookup;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositRequest;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
@@ -34,7 +34,6 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.CloseableInsertSitDataDao;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
-import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoOptionsBuilder;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.model.DataModel;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.AsdCompleteXerParser;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.GeoJsonBuilder;
@@ -304,7 +303,8 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                 json.put(GEOJSON_FIELD_NAME, GeoJsonBuilder.buildGeoJson(json));
                 
                 DataModel model;
-                MongoConfig depositConfig = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName()).getConfig();
+                MongoClientDepositConnection client = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName());
+                MongoConfig depositConfig = client.getConfig();
                 try {
                     model = new DataModel(
                         json,
@@ -319,7 +319,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                 BasicDBObject query = model.getQuery();
                 BasicDBObject doc = model.getDoc();
                 
-                CloseableInsertSitDataDao dao = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName()).getDao();
+                CloseableInsertSitDataDao dao = client.getDao();
                 
                 if (!doc.containsField(ENCODED_MSG)) {
                     logger.error("Missing " + ENCODED_MSG + " in record " + json);
@@ -353,37 +353,4 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
         logger.error("Failed to store record into MongoDB, retries exhausted. Record: " + json.toString());
         throw new DepositException("Failed to store record into MongoDB, retries exhausted. Record: " + json.toString(), lastException);
     }
-
-    /*
-     * public List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
-     * 
-     * //The list for encoded records. All records in the list will have the
-     * same encoding based on the //query's specified result encoding. This is
-     * either full, base64, or hex. List<String> encodedRecords = new
-     * ArrayList<String>();
-     * 
-     * //Get the result encoding. Default is hex. String resultEncoding =
-     * query.getResultEncoding();
-     * 
-     * //For each dbObject returned by the query for(DBObject dbObj : dbObjs) {
-     * String record = null;
-     * 
-     * //If the object has the encodedMsg field
-     * if(dbObj.containsField("encodedMsg")) { if
-     * (resultEncoding.equalsIgnoreCase("full")) { //Full encoding returns the
-     * full object record = dbObj.toString(); } else if
-     * (resultEncoding.equalsIgnoreCase("base64")) { //Base64 encoding returns
-     * the encoded message record = dbObj.get("encodedMsg").toString(); } else
-     * if (resultEncoding.equalsIgnoreCase("hex")) { //Hex encoding decodes the
-     * base64 encoded message, and then encodes it into hex record =
-     * Hex.encodeHexString(Base64.decodeBase64(dbObj.get("encodedMsg").toString(
-     * ))); }
-     * 
-     * if(record != null) encodedRecords.add(record);
-     * 
-     * } else { logger.error("Missing field encodedMsg for message " + dbObj); }
-     * }
-     * 
-     * return encodedRecords; }
-     */
 }
