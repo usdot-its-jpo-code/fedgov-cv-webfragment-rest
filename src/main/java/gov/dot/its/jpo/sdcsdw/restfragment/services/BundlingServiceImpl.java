@@ -63,7 +63,7 @@ public class BundlingServiceImpl implements BundlingService {
 		    List<AdvisorySituationDataDistribution> distributionList = createDistributionList(asdList, dialogId);
 		    for (AdvisorySituationDataDistribution distribution : distributionList) {
 		        JsonNode node = mapper.valueToTree(distribution);
-		        logger.info("Got node " + node.toString());
+		      //  logger.info("Got node " + node.toString());
                 returnJsons.add(node);
             }
 		    break;
