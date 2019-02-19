@@ -107,10 +107,11 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public DepositResponse executeDeposit(DepositRequest request) {
-        return null;
-        // TODO Auto-generated method stub
+    public DepositResponse executeDeposit(DepositRequest request, Document xer) throws DepositException {
         
+        int value = this.warehouseService.executeDeposit(request, xer);
+        DepositResponse response = new DepositResponse();
+        response.setDepositCount(value);
+        return response;
     }
-
 }

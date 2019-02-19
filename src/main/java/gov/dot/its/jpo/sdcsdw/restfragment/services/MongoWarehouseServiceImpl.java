@@ -22,6 +22,7 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoOptions;
 import com.mongodb.WriteResult;
 
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientConnection;
@@ -30,7 +31,10 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositRequest;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.CloseableInsertSitDataDao;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoOptionsBuilder;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.model.DataModel;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.AsdCompleteXerParser;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.GeoJsonBuilder;
@@ -267,13 +271,17 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public int executeDeposit(DepositRequest request, Document xer) throws DepositException {
-        // TODO implement
-        
-        //Check for valid system name. Need to add a second for deposit config
-        //Then perform the deposit
-        
+    public int executeDeposit(DepositRequest request, Document xer) throws DepositException {        
+        //Check for valid system name, then deposit
+        checkValidDepositSystemName(request.getSystemDepositName());
         return deposit(request, xer);
+    }
+    
+    private void checkValidDepositSystemName(String systemName) throws DepositException {
+        if (this.mongoClientLookup.lookupMongoDepositClient(systemName) == null) {
+            logger.error("Invalid system name provided with deposit request: " + systemName);
+            throw new DepositException("Invalid system name provided: " + systemName);
+        }
     }
     
     private int deposit(DepositRequest request, Document xer) throws DepositException {
@@ -281,7 +289,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
         int retries = 3;
         Exception lastException = null;
         
-        //Convert the DepositRequest object into JSONObject in order to conform with current ASD/XER functionality.
+        //Convert the DepositRequest object into JSONObject in order to use ASD/XER functionality.
         JSONObject json = (JSONObject)JSONSerializer.toJSON(request);
         
         while (retries >= 0) {
@@ -296,19 +304,22 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                 json.put(GEOJSON_FIELD_NAME, GeoJsonBuilder.buildGeoJson(json));
                 
                 DataModel model;
+                MongoConfig depositConfig = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName()).getConfig();
                 try {
                     model = new DataModel(
                         json,
-                        config.ttlFieldName, 
-                        config.ignoreMessageTTL,
-                        config.ttlValue, 
-                        config.ttlUnit);
+                        depositConfig.ttlFieldName, 
+                        depositConfig.ignoreMessageTTL,
+                        depositConfig.ttlValue, 
+                        depositConfig.ttlUnit);
                 } catch (ParseException ex) {
                     throw new DepositException("Could not build the data model due to a parsing error", ex);
                 }
                 
                 BasicDBObject query = model.getQuery();
                 BasicDBObject doc = model.getDoc();
+                
+                CloseableInsertSitDataDao dao = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName()).getDao();
                 
                 if (!doc.containsField(ENCODED_MSG)) {
                     logger.error("Missing " + ENCODED_MSG + " in record " + json);
@@ -317,13 +328,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                 
                 WriteResult result = null;
                 if (model.getQuery() != null) {
-                    result = this.dao.upsert(config.collectionName, query, doc);
+                    result = dao.upsert(depositConfig.collectionName, query, doc);
                     logger.info(result.getN() + " records affected by update");
                 } else {
-                    result = this.dao.insert(config.collectionName, doc);
+                    result = dao.insert(depositConfig.collectionName, doc);
                     logger.info(result.getN() + " records affected by insert");
                 }
                 
+                //Deposit of single request completed
                 return 1;
                 
             } catch (DepositException ex) {

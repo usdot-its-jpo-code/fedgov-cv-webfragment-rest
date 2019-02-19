@@ -1,11 +1,14 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.config;
 
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.mongodb.MongoException;
 
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
 
@@ -27,12 +30,14 @@ public class MongoClientLookup {
      * Constructor, initializing the connections
      * 
      * @param mongoConfigLoader
+     * @throws MongoException 
+     * @throws UnknownHostException 
      */
     @Autowired
-    public MongoClientLookup(MongoConfigLoader mongoConfigLoader) {
+    public MongoClientLookup(MongoConfigLoader mongoConfigLoader) throws UnknownHostException, MongoException {
         this.mongoConfigLoader = mongoConfigLoader;
         this.connections = initializeConnections(this.mongoConfigLoader.getMongoConfigList());
-        this.depositConnections = initializeConnections(this.mongoConfigLoader.getMongoDepositConfigList());
+        this.depositConnections = initializeDepositConnections(this.mongoConfigLoader.getMongoDepositConfigList());
     }
 
     /**
@@ -51,6 +56,20 @@ public class MongoClientLookup {
             connections.put(config.systemName, connection);
         }
 
+        return connections;
+    }
+    
+    private static Map<String, MongoClientConnection> initializeDepositConnections(List<MongoConfig> configList) throws UnknownHostException, MongoException {
+        
+        Map<String, MongoClientConnection> connections = new HashMap<String, MongoClientConnection>();
+        
+        //For each config, create a new connection, connect, and put in the map
+        for (MongoConfig config : configList) {
+            MongoClientConnection connection = new MongoClientConnection(config);
+            connection.connectDeposit();
+            connections.put(config.systemName, connection);
+        }
+        
         return connections;
     }
 

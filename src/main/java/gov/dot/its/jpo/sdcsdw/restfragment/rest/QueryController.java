@@ -48,7 +48,7 @@ public class QueryController {
         
         deposit.validateDeposit(request);
         Document xer = deposit.prepareDeposit(request);
-        DepositResponse response = deposit.executeDeposit(request);
+        DepositResponse response = deposit.executeDeposit(request, xer);
         return response;
     }
 

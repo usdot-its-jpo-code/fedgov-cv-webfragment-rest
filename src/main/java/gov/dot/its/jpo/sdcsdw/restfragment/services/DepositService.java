@@ -14,5 +14,5 @@ public interface DepositService {
     
     public Document prepareDeposit(DepositRequest request) throws DepositException, DecoderException, CodecException;
     
-    public DepositResponse executeDeposit(DepositRequest request);
+    public DepositResponse executeDeposit(DepositRequest request, Document xer) throws DepositException;
 }
