@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -27,6 +28,7 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.FormattingFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.UnformattingFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.Base64PerData;
+import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerDataFormatter;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.SpacelessHexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
@@ -95,13 +97,26 @@ public class EncoderServiceImpl implements EncoderService {
         }
         
         for (JsonNode node : postPackageResults) {
+
+            logger.debug("Packaging " + node);
+            
             switch (resultEncoding) {
             case "hex":
             case "base64":
                 StringWriter writer = new StringWriter();
                 try {
-                    marshaller.marshal(mapper.treeToValue(node, typeClass), writer);
-                    String xer = XerJaxbCodec.createSelfClosingTags(writer.toString());
+                    String xer;
+                    switch (resultPackaging) {
+                    case "bundle":
+                    case "distribution":
+                        marshaller.marshal(mapper.treeToValue(node, typeClass), writer);
+                        xer = XerJaxbCodec.createSelfClosingTags(writer.toString());
+                        break;
+                    default:
+                        String encodedMsgPerHex = node.get("encodedMsg").asText();
+                        xer = PerXerCodec.perToXer(Asn1Types.AdvisorySituationDataType, encodedMsgPerHex, HexPerData.unformatter, RawXerData.formatter);
+                    }
+                    
                     logger.info("Got XER " + xer);
                     JsonNode stringNode = new TextNode(PerXerCodec.xerToPer(asn1Type, xer, RawXerData.unformatter, formatter));
                     encodedResults.add(stringNode);
