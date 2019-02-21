@@ -23,8 +23,8 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.PerXerCodec;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.FormattingFailedException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.UnformattingFailedException;
-import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
+import gov.dot.its.jpo.sdcsdw.restfragment.util.EncodeTypeUtil;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
@@ -84,7 +84,7 @@ public class BundlingServiceImpl implements BundlingService {
             //AdvisorySituationData asd = mapper.treeToValue(json, AdvisorySituationData.class);
             String encodedMsgPerHex = json.get("encodedMsg").asText();
             try {
-                String encodedMsgXerString = PerXerCodec.perToXer(Asn1Types.AdvisorySituationDataType, encodedMsgPerHex, HexPerData.unformatter, RawXerData.formatter);
+                String encodedMsgXerString = PerXerCodec.perToXer(Asn1Types.AdvisorySituationDataType, encodedMsgPerHex, EncodeTypeUtil.getUnformatter(json), RawXerData.formatter);
                 AdvisorySituationData asd = (AdvisorySituationData) XerJaxbCodec.XerToJaxbPojo(encodedMsgXerString);
                 asdList.add(asd);
             } catch(CodecFailedException | FormattingFailedException | UnformattingFailedException | JAXBException e) {

@@ -32,6 +32,7 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.PerDataFormatter;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.SpacelessHexPerData;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
+import gov.dot.its.jpo.sdcsdw.restfragment.util.EncodeTypeUtil;
 import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
 @Service
@@ -114,7 +115,7 @@ public class EncoderServiceImpl implements EncoderService {
                         break;
                     default:
                         String encodedMsgPerHex = node.get("encodedMsg").asText();
-                        xer = PerXerCodec.perToXer(Asn1Types.AdvisorySituationDataType, encodedMsgPerHex, HexPerData.unformatter, RawXerData.formatter);
+                        xer = PerXerCodec.perToXer(Asn1Types.AdvisorySituationDataType, encodedMsgPerHex, EncodeTypeUtil.getUnformatter(node), RawXerData.formatter);
                     }
                     
                     logger.info("Got XER " + xer);

@@ -166,8 +166,9 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
         String resultEncoding = query.getResultEncoding();
 
         if (!resultEncoding.equals("full")) {
-            fieldNames = new BasicDBObject(2);
+            fieldNames = new BasicDBObject(3);
             fieldNames.put("encodedMsg", 1);
+            fieldNames.put("encodeType", 1);
             fieldNames.put("_id", 0);
             queryParams.append(" fieldNames: ").append(fieldNames);
         }
