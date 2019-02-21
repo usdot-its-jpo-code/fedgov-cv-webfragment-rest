@@ -29,7 +29,7 @@ public class DepositRequest {
     /**
      * Get the encoded message.
      * 
-     * @return encode message
+     * @return encoded message
      */
     public String getEncodedMsg() {
         return this.encodedMsg;

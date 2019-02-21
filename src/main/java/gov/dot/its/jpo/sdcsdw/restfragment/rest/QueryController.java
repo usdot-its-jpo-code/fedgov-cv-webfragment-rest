@@ -39,8 +39,9 @@ public class QueryController {
     private DepositService deposit;
 
     @Autowired
-    public QueryController(QueryAndBundlingService queryAndBundle) {
+    public QueryController(QueryAndBundlingService queryAndBundle, DepositService deposit) {
         this.queryAndBundle = queryAndBundle;
+        this.deposit = deposit;
     }
 
     @RequestMapping(value = "/deposit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
