@@ -1,190 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>gov.usdot</groupId>
-	<artifactId>fedgov-cv-webfragment-rest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>fedgov-cv-webfragment-rest</name>
-	<description>Webfragment providing a RESTful interface to the SDC/SDW using Spring MVC</description>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>gov.usdot</groupId>
+  <artifactId>fedgov-cv-webfragment-rest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>fedgov-cv-webfragment-rest</name>
+  <description>Webfragment providing a RESTful interface to the SDC/SDW using Spring MVC</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<jacoco.agent.argLine />
-		<argLine />
-	</properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <jacoco.agent.argLine />
+    <argLine />
+  </properties>
 
-	<profiles>
-		<profile>
-			<id>osx</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<properties>
-				<per-xer-codec-native-artifactId>per-xer-codec-native-osx</per-xer-codec-native-artifactId>
-				<per-xer-codec-native-type>dylib</per-xer-codec-native-type>
-			</properties>
-		</profile>
-		<profile>
-			<id>linux</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<name>Linux</name>
-				</os>
-			</activation>
-			<properties>
-				<per-xer-codec-native-artifactId>per-xer-codec-native-linux</per-xer-codec-native-artifactId>
-				<per-xer-codec-native-type>so</per-xer-codec-native-type>
-			</properties>
-		</profile>
-		<profile>
-			<id>nt</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<per-xer-codec-native-artifactId>per-xer-codec-native-nt</per-xer-codec-native-artifactId>
-				<per-xer-codec-native-type>dll</per-xer-codec-native-type>
-			</properties>
-		</profile>
-		<profile>
-			<id>docker</id>
-			<activation>
-				<property>
-					<name>build.with.docker</name>
-				</property>
-			</activation>
-			<properties>
-				<per-xer-codec-native-artifactId>per-xer-codec-native-linux</per-xer-codec-native-artifactId>
-				<per-xer-codec-native-type>so</per-xer-codec-native-type>
-			</properties>
-		</profile>
-		<profile>
-			<id>spring-boot-testing</id>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-parent</artifactId>
-						<version>2.0.5.RELEASE</version>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-			<dependencies>
-				<dependency>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-test</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+  <profiles>
+    <profile>
+      <id>osx</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <per-xer-codec-native-artifactId>per-xer-codec-native-osx</per-xer-codec-native-artifactId>
+        <per-xer-codec-native-type>dylib</per-xer-codec-native-type>
+      </properties>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <name>Linux</name>
+        </os>
+      </activation>
+      <properties>
+        <per-xer-codec-native-artifactId>per-xer-codec-native-linux</per-xer-codec-native-artifactId>
+        <per-xer-codec-native-type>so</per-xer-codec-native-type>
+      </properties>
+    </profile>
+    <profile>
+      <id>nt</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <per-xer-codec-native-artifactId>per-xer-codec-native-nt</per-xer-codec-native-artifactId>
+        <per-xer-codec-native-type>dll</per-xer-codec-native-type>
+      </properties>
+    </profile>
+    <profile>
+      <id>docker</id>
+      <activation>
+        <property>
+          <name>build.with.docker</name>
+        </property>
+      </activation>
+      <properties>
+        <per-xer-codec-native-artifactId>per-xer-codec-native-linux</per-xer-codec-native-artifactId>
+        <per-xer-codec-native-type>so</per-xer-codec-native-type>
+      </properties>
+    </profile>
+    <profile>
+      <id>spring-boot-testing</id>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-parent</artifactId>
+            <version>2.0.5.RELEASE</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
-	<dependencies>
+  <dependencies>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>5.0.9.RELEASE</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>5.0.9.RELEASE</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>5.0.9.RELEASE</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>5.0.9.RELEASE</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>5.0.9.RELEASE</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>5.0.9.RELEASE</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-cas</artifactId>
-			<version>5.0.9.RELEASE</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-cas</artifactId>
+      <version>5.0.9.RELEASE</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>5.0.9.RELEASE</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>5.0.9.RELEASE</version>
+    </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.9.4</version>
-		</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.4</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.8.3</version>
-		</dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.8.3</version>
+    </dependency>
 
 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>gov.dot.its.jpo.sdcsdw</groupId>
-			<artifactId>common-models</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+    <dependency>
+      <groupId>gov.dot.its.jpo.sdcsdw</groupId>
+      <artifactId>common-models</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
-		<dependency>
-			<groupId>gov.usdot</groupId>
-			<artifactId>fedgov-cv-webapp-websocket</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+    <dependency>
+      <groupId>gov.usdot</groupId>
+      <artifactId>fedgov-cv-webapp-websocket</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>gov.dot.its.jpo.sdcsdw</groupId>
-			<artifactId>UDPInterface</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+    <dependency>
+      <groupId>gov.dot.its.jpo.sdcsdw</groupId>
+      <artifactId>UDPInterface</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
-		<dependency>
-			<groupId>gov.dot.its.jpo.sdcsdw</groupId>
-			<artifactId>per-xer-codec-java</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+    <dependency>
+      <groupId>gov.dot.its.jpo.sdcsdw</groupId>
+      <artifactId>per-xer-codec-java</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
-	</dependencies>
-	
-	<build>
-	<plugins>
-	<plugin>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.0.2</version>
@@ -220,7 +221,6 @@
             @{jacoco.agent.argLine} ${argLine}</argLine>
         </configuration>
       </plugin>
-	</plugins>
-	</build>
-
-</project>
+    </plugins>
+  </build>
+ </project>
