@@ -19,7 +19,7 @@ public class DepositServiceImplTest {
         this.request = new DepositRequest();
         this.request.setSystemDepositName("SDW 2.3");
         this.request.setEncodeType("hex");
-        this.request.setEncodeMsg("placeholder");
+        this.request.setEncodedMsg("placeholder");
     }
     
     //No systemDepositName
@@ -39,7 +39,7 @@ public class DepositServiceImplTest {
     //No encodeMsg
     @Test(expected = DepositException.class)
     public void testValidateNoEncodeMsg() throws Exception {
-        request.setEncodeMsg(null);
+        request.setEncodedMsg(null);
         impl.validateDeposit(request);
     }
     

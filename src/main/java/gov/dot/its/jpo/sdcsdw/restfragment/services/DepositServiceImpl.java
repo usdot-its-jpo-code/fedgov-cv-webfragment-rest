@@ -41,7 +41,7 @@ public class DepositServiceImpl implements DepositService {
     public void validateDeposit(DepositRequest request) throws DepositException {
         
         //REQUIRED: request must have all required fields
-        if(request.getSystemDepositName() != null && request.getEncodeType() != null && request.getEncodeMsg() != null) {
+        if(request.getSystemDepositName() != null && request.getEncodeType() != null && request.getEncodedMsg() != null) {
             
             //Note: Verification of a correct system name is confirmed by the warehouse service.
             
@@ -65,7 +65,7 @@ public class DepositServiceImpl implements DepositService {
             if(request.getEncodeType() == null)
                 errorMsg = errorMsg + ENCODE_TYPE + " ";
             
-            if(request.getEncodeMsg() == null)
+            if(request.getEncodedMsg() == null)
                 errorMsg = errorMsg + ENCODED_MSG;
             
             throw new DepositException(errorMsg);
@@ -79,12 +79,12 @@ public class DepositServiceImpl implements DepositService {
         byte [] bytes = null;
         if(request.getEncodeType().equalsIgnoreCase(DepositOptions.ENCODE_TYPE_HEX) || request.getEncodeType().equalsIgnoreCase(DepositOptions.ENCODE_TYPE_UPER)) {
             try {
-                bytes = Hex.decodeHex(request.getEncodeMsg().toCharArray());
+                bytes = Hex.decodeHex(request.getEncodedMsg().toCharArray());
             } catch (DecoderException e) {
                 throw new DecoderException("Hex to bytes decoding failed: " + e);
             }
         } else if (request.getEncodeType().equalsIgnoreCase(DepositOptions.ENCODE_TYPE_BASE64)) {
-            bytes = Base64.decodeBase64(request.getEncodeMsg());
+            bytes = Base64.decodeBase64(request.getEncodedMsg());
         }
         
         //Convert bytes to Document
@@ -100,7 +100,7 @@ public class DepositServiceImpl implements DepositService {
         if(ret != null)
             return ret;
         else
-            throw new DepositException("Failure to prepare deposit of encoded message: " + request.getEncodeMsg());
+            throw new DepositException("Failure to prepare deposit of encoded message: " + request.getEncodedMsg());
     }
 
     @Override
