@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -181,46 +182,46 @@
 		</dependency>
 
 	</dependencies>
-	
-	<build>
-	<plugins>
-	<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <artifactItems>
-            <artifactItem>
-              <groupId>gov.dot.its.jpo.sdcsdw</groupId>
-              <artifactId>${per-xer-codec-native-artifactId}</artifactId>
-              <version>1.0.0-SNAPSHOT</version>
-              <type>${per-xer-codec-native-type}</type>
-              <overWrite>false</overWrite>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <destFileName>libper-xer-codec.${per-xer-codec-native-type}</destFileName>
-            </artifactItem>
-          </artifactItems>
-        </configuration>
-      </plugin>
 
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
-        <configuration>
-          <argLine>-Djava.library.path=${project.build.directory}
-            @{jacoco.agent.argLine} ${argLine}</argLine>
-        </configuration>
-      </plugin>
-	</plugins>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>gov.dot.its.jpo.sdcsdw</groupId>
+							<artifactId>${per-xer-codec-native-artifactId}</artifactId>
+							<version>1.0.0-SNAPSHOT</version>
+							<type>${per-xer-codec-native-type}</type>
+							<overWrite>false</overWrite>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<destFileName>libper-xer-codec.${per-xer-codec-native-type}</destFileName>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+				<configuration>
+					<argLine>-Djava.library.path=${project.build.directory}
+						@{jacoco.agent.argLine} ${argLine}</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 </project>
