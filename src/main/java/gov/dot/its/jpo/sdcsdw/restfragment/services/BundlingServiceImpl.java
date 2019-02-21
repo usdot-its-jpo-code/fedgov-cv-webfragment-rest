@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,6 +28,8 @@ import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.xer.RawXerData;
 import gov.dot.its.jpo.sdcsdw.udpdialoghandler.service.MessageCreator;
 import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -111,10 +111,10 @@ public class BundlingServiceImpl implements BundlingService {
 	
 	
 	private List<AdvisorySituationDataDistribution> createDistributionList(List<AdvisorySituationData> asd, String dialogId) {
-		DialogID dialogIDObject = new DialogID();
+		DialogID dialogIDObject = DialogID.fromValue("advSitDatDist");
 		
-		//dialogIDObject.setDialogId(DialogIdType.fromValue(dialogId));
-		dialogIDObject.setAdvSitDatDist("");
+		//dialogIDObject.setDialogId(DialogID.fromValue(dialogId));
+		//dialogIDObject.setAdvSitDatDist("");
 		
 		AdvisorySituationDataDistributionList distributionListObject = MessageCreator.createAdvisorySituationDataDistributionList(asd, dialogIDObject, "00 00 00 00", "00 00 00 00");
 		
