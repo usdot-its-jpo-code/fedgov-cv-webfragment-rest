@@ -100,6 +100,9 @@ public class CasLogin {
     }
     
     private static String getKvp(List<String> headerValues, String key) {
+        if (headerValues == null) {
+            return null;
+        }
         for (String headerValue : headerValues) {
             String[] entry = headerValue.split("=", 2);
             if (entry.length < 2) {
