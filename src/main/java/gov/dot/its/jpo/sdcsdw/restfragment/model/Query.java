@@ -3,6 +3,9 @@ package gov.dot.its.jpo.sdcsdw.restfragment.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * POJO for the query request
+ */
 public class Query {
 
     private String systemQueryName;

@@ -10,11 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class MongoConfigFileProperty {
 
+    //Update: the same mongoConfigFile property is used for both queries and deposits
     @Value("${mongoConfigFile}")
     private String mongoConfigFilePropertyValue;
 
     /**
-     * Returns the property value for the Mongo configuration file
+     * Returns the property value for the Mongo configuration file used by queries
      * 
      * @return String of the property value
      */

@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,13 +20,28 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientConnection;
+import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientDepositConnection;
 import gov.dot.its.jpo.sdcsdw.restfragment.config.MongoClientLookup;
+import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositRequest;
 import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.CloseableInsertSitDataDao;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.model.DataModel;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.AsdCompleteXerParser;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.GeoJsonBuilder;
+import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.xerjsonparser.XerJsonParserException;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
+/**
+ * Mongo implementation of the WarehouseService interface to query and deposit
+ */
 @Service
 @Primary
 public class MongoWarehouseServiceImpl implements WarehouseService {
@@ -41,6 +55,14 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     private static final String CREATED_AT_SORT_INDEX_NAME = "createdAt_1";
     private static final String REQUEST_ID_SORT_INDEX_NAME = "requestId_1_createdAt_1";
 
+    //Constants used when depositing
+    private static final String ENCODED_MSG = "encodedMsg";
+    private static final String GEOJSON_FIELD_NAME = "region";
+    
+    /**
+     * Constructor
+     * @param mongoClientLookup the MongoClientLookup containing the Mongo connections
+     */
     @Autowired
     public MongoWarehouseServiceImpl(MongoClientLookup mongoClientLookup) {
         this.mongoClientLookup = mongoClientLookup;
@@ -60,9 +82,11 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     }
 
     private void checkValidSystemName(String systemName) throws InvalidQueryException {
-        if (mongoClientLookup.lookupMongoClient(systemName) == null)
+        if (mongoClientLookup.lookupMongoClient(systemName) == null) {
+            logger.error("Invalid system name provided: " + systemName);
             throw new InvalidQueryException(
                     "Invalid system name provided: " + systemName);
+        }
     }
 
     private BasicDBObject buildMongoQuery(Query query) throws InvalidQueryException {
@@ -116,6 +140,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                     try {
                         QueryOptions.getSDFMillis().parse(query.getStartDate());
                     } catch (ParseException e2) {
+                        logger.error("Invalid startDate provided: " + query.getStartDate());
                         throw new InvalidQueryException("Invalid startDate: "
                                 + query.getStartDate()
                                 + ", must match format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -131,6 +156,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                     try {
                         QueryOptions.getSDFMillis().parse(query.getEndDate());
                     } catch (ParseException e2) {
+                        logger.error("Invalid endDate provided: " + query.getEndDate());
                         throw new InvalidQueryException("Invalid endDate: "
                                 + query.getEndDate()
                                 + ", must match format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -253,36 +279,89 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
         return jsonNodes;
     }
 
-    /*
-     * public List<String> encodeRecords(List<DBObject> dbObjs, Query query) {
-     * 
-     * //The list for encoded records. All records in the list will have the
-     * same encoding based on the //query's specified result encoding. This is
-     * either full, base64, or hex. List<String> encodedRecords = new
-     * ArrayList<String>();
-     * 
-     * //Get the result encoding. Default is hex. String resultEncoding =
-     * query.getResultEncoding();
-     * 
-     * //For each dbObject returned by the query for(DBObject dbObj : dbObjs) {
-     * String record = null;
-     * 
-     * //If the object has the encodedMsg field
-     * if(dbObj.containsField("encodedMsg")) { if
-     * (resultEncoding.equalsIgnoreCase("full")) { //Full encoding returns the
-     * full object record = dbObj.toString(); } else if
-     * (resultEncoding.equalsIgnoreCase("base64")) { //Base64 encoding returns
-     * the encoded message record = dbObj.get("encodedMsg").toString(); } else
-     * if (resultEncoding.equalsIgnoreCase("hex")) { //Hex encoding decodes the
-     * base64 encoded message, and then encodes it into hex record =
-     * Hex.encodeHexString(Base64.decodeBase64(dbObj.get("encodedMsg").toString(
-     * ))); }
-     * 
-     * if(record != null) encodedRecords.add(record);
-     * 
-     * } else { logger.error("Missing field encodedMsg for message " + dbObj); }
-     * }
-     * 
-     * return encodedRecords; }
-     */
+    @Override
+    public int executeDeposit(DepositRequest request, Document xer) throws DepositException {        
+        //Check for valid system name, then deposit
+        checkValidDepositSystemName(request.getSystemDepositName());
+        return deposit(request, xer);
+    }
+    
+    private void checkValidDepositSystemName(String systemName) throws DepositException {
+        if (this.mongoClientLookup.lookupMongoDepositClient(systemName) == null) {
+            logger.error("Invalid system name provided with deposit request: " + systemName);
+            throw new DepositException("Invalid system name provided: " + systemName);
+        }
+    }
+    
+    private int deposit(DepositRequest request, Document xer) throws DepositException {
+        
+        int retries = 3;
+        Exception lastException = null;
+        
+        //Convert the DepositRequest object into JSONObject in order to use ASD/XER functionality.
+        JSONObject json = (JSONObject)JSONSerializer.toJSON(request);
+        
+        while (retries >= 0) {
+            try {
+                
+                try {
+                    AsdCompleteXerParser.unpackAsdXer(json, xer);
+                } catch (XerJsonParserException ex) {
+                    throw new DepositException(ex);
+                }
+                
+                json.put(GEOJSON_FIELD_NAME, GeoJsonBuilder.buildGeoJson(json));
+                
+                DataModel model;
+                MongoClientDepositConnection client = this.mongoClientLookup.lookupMongoDepositClient(request.getSystemDepositName());
+                MongoConfig depositConfig = client.getConfig();
+                try {
+                    model = new DataModel(
+                        json,
+                        depositConfig.ttlFieldName, 
+                        depositConfig.ignoreMessageTTL,
+                        depositConfig.ttlValue, 
+                        depositConfig.ttlUnit);
+                } catch (ParseException ex) {
+                    logger.error("Could not build the data model due to a parsing error");
+                    throw new DepositException("Could not build the data model due to a parsing error", ex);
+                }
+                
+                BasicDBObject query = model.getQuery();
+                BasicDBObject doc = model.getDoc();
+                
+                CloseableInsertSitDataDao dao = client.getDao();
+                
+                if (!doc.containsField(ENCODED_MSG)) {
+                    logger.error("Missing " + ENCODED_MSG + " in record " + json);
+                    throw new DepositException("An internal error occurred");
+                }
+                
+                WriteResult result = null;
+                if (model.getQuery() != null) {
+                    result = dao.upsert(depositConfig.collectionName, query, doc);
+                    logger.info(result.getN() + " records affected by update");
+                } else {
+                    result = dao.insert(depositConfig.collectionName, doc);
+                    logger.info(result.getN() + " records affected by insert");
+                }
+                
+                //Deposit of single request completed
+                return 1;
+                
+            } catch (DepositException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                logger.error(String.format("Failed to store record into MongoDB. Message: %s", ex.toString()), ex);
+                lastException = ex;
+            } finally {
+                retries--;
+            }
+            
+            try { Thread.sleep(10); } catch (Exception ignore) {}
+        }
+        
+        logger.error("Failed to store record into MongoDB, retries exhausted. Record: " + json.toString());
+        throw new DepositException("Failed to store record into MongoDB, retries exhausted. Record: " + json.toString(), lastException);
+    }
 }

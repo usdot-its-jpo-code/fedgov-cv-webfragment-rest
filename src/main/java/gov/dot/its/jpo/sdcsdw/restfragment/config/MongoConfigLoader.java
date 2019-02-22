@@ -12,8 +12,8 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.server.utils.ConfigUtils;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.server.utils.ConfigurationException;
 
 /**
- * Transition the contents of the Mongo configuration file into a list of
- * MongoClients
+ * Transition the contents of the Mongo configuration files into a list of
+ * MongoConfig.
  *
  */
 @Component

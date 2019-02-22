@@ -10,12 +10,25 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryService {
 
-    // Set defaults
+    /**
+     * Set query defaults
+     * @param query the Query
+     */
     public void setDefaults(Query query);
 
-    // Validate query
+    /**
+     * Validate the query request
+     * @param query the Query
+     * @throws InvalidQueryException
+     */
     public void validateQuery(Query query) throws InvalidQueryException;
 
-    // Execute the query
+    /**
+     * Execute the query request
+     * @param query the Query
+     * @return the list of results as JSONNode objects
+     * @throws InvalidQueryException
+     * @throws IOException
+     */
     public List<JsonNode> forwardQuery(Query query) throws InvalidQueryException, IOException;
 }

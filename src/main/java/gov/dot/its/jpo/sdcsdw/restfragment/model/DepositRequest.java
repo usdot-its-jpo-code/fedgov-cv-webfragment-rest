@@ -1,10 +1,13 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
+/**
+ * POJO for the deposit request
+ */
 public class DepositRequest {
 
     private String systemDepositName;
     private String encodeType;
-    private String encodeMsg;
+    private String encodedMsg;
 
     // Getters
 
@@ -27,12 +30,12 @@ public class DepositRequest {
     }
 
     /**
-     * Get the encode message.
+     * Get the encoded message.
      * 
-     * @return encode message
+     * @return encoded message
      */
-    public String getEncodeMsg() {
-        return this.encodeMsg;
+    public String getEncodedMsg() {
+        return this.encodedMsg;
     }
 
     // Setters
@@ -56,11 +59,11 @@ public class DepositRequest {
     }
 
     /**
-     * Set the encode message.
+     * Set the encoded message.
      * 
-     * @param encodeMsg
+     * @param encodedMsg
      */
-    public void setEncodeMsg(String encodeMsg) {
-        this.encodeMsg = encodeMsg;
+    public void setEncodedMsg(String encodedMsg) {
+        this.encodedMsg = encodedMsg;
     }
 }

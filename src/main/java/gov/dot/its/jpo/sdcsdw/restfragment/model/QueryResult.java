@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+/**
+ * POJO for the query result
+ */
 public class QueryResult {
 
     private List<JsonNode> results;
