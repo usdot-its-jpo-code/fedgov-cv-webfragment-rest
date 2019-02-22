@@ -1,6 +1,7 @@
 .project
 .classpath
 .settings
+log4j-application.log
 
 /target/
 !.mvn/wrapper/maven-wrapper.jar
