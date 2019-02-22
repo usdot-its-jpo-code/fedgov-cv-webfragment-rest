@@ -2,8 +2,8 @@ package gov.dot.its.jpo.sdcsdw.restfragment.services;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +36,12 @@ public class BundlingServiceTest {
 		
 		
 		ObjectMapper mapper = new ObjectMapper();
-		File from = new File("sample-query-result.json");
+		
 		
 		for (int i = 0; i < 801; i++) {
-			jsonList.add(mapper.readTree(from));
+		    InputStream is =  BundlingServiceTest.class.getResourceAsStream( "/sample-query-result.json");
+		    JsonNode node = mapper.readTree(is);
+        jsonList.add(node);
 		}
 		
 		
@@ -63,10 +65,11 @@ public class BundlingServiceTest {
 		
 		
 		ObjectMapper mapper = new ObjectMapper();
-		File from = new File("sample-query-result.json");
 		
 		for (int i = 0; i < 801; i++) {
-			jsonList.add(mapper.readTree(from));
+		    InputStream is =  BundlingServiceTest.class.getResourceAsStream( "/sample-query-result.json");
+		    JsonNode node = mapper.readTree(is);
+        jsonList.add(node);
 		}
 		
 		
@@ -90,10 +93,12 @@ public class BundlingServiceTest {
 		
 		
 		ObjectMapper mapper = new ObjectMapper();
-		File from = new File("sample-query-result.json");
+
 		
 		for (int i = 0; i < 0; i++) {
-			jsonList.add(mapper.readTree(from));
+		    InputStream is =  BundlingServiceTest.class.getResourceAsStream( "/sample-query-result.json");
+		    JsonNode node = mapper.readTree(is);
+        jsonList.add(node);
 		}
 		
 		
@@ -117,10 +122,12 @@ public class BundlingServiceTest {
 		
 		
 		ObjectMapper mapper = new ObjectMapper();
-		File from = new File("sample-query-result.json");
+
 		
 		for (int i = 0; i < 0; i++) {
-			jsonList.add(mapper.readTree(from));
+		    InputStream is =  BundlingServiceTest.class.getResourceAsStream( "/sample-query-result.json");
+		    JsonNode node = mapper.readTree(is);
+		    jsonList.add(node);
 		}
 		
 		
