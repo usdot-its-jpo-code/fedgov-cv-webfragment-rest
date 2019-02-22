@@ -30,6 +30,9 @@ import gov.dot.its.jpo.sdcsdw.restfragment.services.QueryAndBundlingService;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
+/**
+ * Controller for query and deposit endpoints
+ */
 @RestController
 @RequestMapping("/v2")
 public class QueryController {
@@ -38,12 +41,25 @@ public class QueryController {
     private QueryAndBundlingService queryAndBundle;
     private DepositService deposit;
 
+    /**
+     * Constructor for the controller
+     * @param queryAndBundle The service used to query and bundle
+     * @param deposit The depositing service
+     */
     @Autowired
     public QueryController(QueryAndBundlingService queryAndBundle, DepositService deposit) {
         this.queryAndBundle = queryAndBundle;
         this.deposit = deposit;
     }
 
+    /**
+     * Endpoint for making deposits
+     * @param request the DepositRequest
+     * @return DepositResponse indicating the number of deposits
+     * @throws DepositException
+     * @throws DecoderException
+     * @throws CodecException
+     */
     @RequestMapping(value = "/deposit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public DepositResponse deposit(@RequestBody DepositRequest request) throws DepositException, DecoderException, CodecException {
         
@@ -53,6 +69,18 @@ public class QueryController {
         return response;
     }
 
+    /**
+     * Endpoint for making queries
+     * @param query the Query
+     * @return the QueryResult
+     * @throws CodecFailedException
+     * @throws FormattingFailedException
+     * @throws UnformattingFailedException
+     * @throws IOException
+     * @throws DecoderException
+     * @throws JAXBException
+     * @throws InvalidQueryException
+     */
     @RequestMapping(value = "/query", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public QueryResult query(@RequestBody Query query)
             throws CodecFailedException, FormattingFailedException,
@@ -65,6 +93,10 @@ public class QueryController {
         return result;
     }
 
+    /**
+     * Endpoint for health checks
+     * @return "alive" as an indicator response
+     */
     @GetMapping("/health")
     public String health() {
         return "alive";

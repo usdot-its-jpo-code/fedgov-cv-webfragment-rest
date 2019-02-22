@@ -3,9 +3,7 @@ package gov.dot.its.jpo.sdcsdw.restfragment.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Utility class containing valid query options and defaults.

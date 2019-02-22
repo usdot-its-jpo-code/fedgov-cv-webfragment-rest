@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +39,9 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.service.xerjsonparser.XerJsonPa
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+/**
+ * Mongo implementation of the WarehouseService interface to query and deposit
+ */
 @Service
 @Primary
 public class MongoWarehouseServiceImpl implements WarehouseService {
@@ -58,6 +59,10 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     private static final String ENCODED_MSG = "encodedMsg";
     private static final String GEOJSON_FIELD_NAME = "region";
     
+    /**
+     * Constructor
+     * @param mongoClientLookup the MongoClientLookup containing the Mongo connections
+     */
     @Autowired
     public MongoWarehouseServiceImpl(MongoClientLookup mongoClientLookup) {
         this.mongoClientLookup = mongoClientLookup;
@@ -77,9 +82,11 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
     }
 
     private void checkValidSystemName(String systemName) throws InvalidQueryException {
-        if (mongoClientLookup.lookupMongoClient(systemName) == null)
+        if (mongoClientLookup.lookupMongoClient(systemName) == null) {
+            logger.error("Invalid system name provided: " + systemName);
             throw new InvalidQueryException(
                     "Invalid system name provided: " + systemName);
+        }
     }
 
     private BasicDBObject buildMongoQuery(Query query) throws InvalidQueryException {
@@ -133,6 +140,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                     try {
                         QueryOptions.getSDFMillis().parse(query.getStartDate());
                     } catch (ParseException e2) {
+                        logger.error("Invalid startDate provided: " + query.getStartDate());
                         throw new InvalidQueryException("Invalid startDate: "
                                 + query.getStartDate()
                                 + ", must match format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -148,6 +156,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                     try {
                         QueryOptions.getSDFMillis().parse(query.getEndDate());
                     } catch (ParseException e2) {
+                        logger.error("Invalid endDate provided: " + query.getEndDate());
                         throw new InvalidQueryException("Invalid endDate: "
                                 + query.getEndDate()
                                 + ", must match format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -314,6 +323,7 @@ public class MongoWarehouseServiceImpl implements WarehouseService {
                         depositConfig.ttlValue, 
                         depositConfig.ttlUnit);
                 } catch (ParseException ex) {
+                    logger.error("Could not build the data model due to a parsing error");
                     throw new DepositException("Could not build the data model due to a parsing error", ex);
                 }
                 

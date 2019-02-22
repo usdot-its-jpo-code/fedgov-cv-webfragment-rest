@@ -1,5 +1,8 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
+/**
+ * POJO for the deposit request
+ */
 public class DepositRequest {
 
     private String systemDepositName;

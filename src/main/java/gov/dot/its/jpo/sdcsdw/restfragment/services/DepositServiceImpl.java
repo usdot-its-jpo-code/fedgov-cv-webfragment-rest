@@ -20,6 +20,9 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.DepositResponse;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.DepositOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.deposit.DepositException;
 
+/**
+ * Implementation of the DepositService for completing deposits
+ */
 @Service
 @Primary
 public class DepositServiceImpl implements DepositService {
@@ -32,6 +35,10 @@ public class DepositServiceImpl implements DepositService {
     private static final String ENCODE_TYPE = "encodeType";
     private static final String ENCODED_MSG = "encodedMsg";
     
+    /**
+     * Constructor
+     * @param warehouseService the warehouse service used for depositing
+     */
     @Autowired
     public DepositServiceImpl(WarehouseService warehouseService) {
         this.warehouseService = warehouseService;
@@ -53,9 +60,11 @@ public class DepositServiceImpl implements DepositService {
                     break;
                 }
             }
-            if(!valid)
+            if(!valid) {
+                logger.error("Invalid encodeType: " + request.getEncodeType());
                 throw new DepositException("Invalid encodeType: " + request.getEncodeType() + " not one of the supported "
                         + "encodeType: " + DepositOptions.getEncodeTypeOptions().toString());
+            }
             
         } else {
             String errorMsg = "Deposit message missing required field(s): ";
@@ -68,6 +77,7 @@ public class DepositServiceImpl implements DepositService {
             if(request.getEncodedMsg() == null)
                 errorMsg = errorMsg + ENCODED_MSG;
             
+            logger.error(errorMsg);
             throw new DepositException(errorMsg);
         }
     }

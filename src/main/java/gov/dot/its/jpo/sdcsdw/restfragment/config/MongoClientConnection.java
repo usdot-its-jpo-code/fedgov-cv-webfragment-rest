@@ -9,6 +9,9 @@ import com.mongodb.MongoException;
 
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
 
+/**
+ * Represents the Mongo connection based on the config from which it is instantiated.
+ */
 public class MongoClientConnection {
 
     private MongoConfig config;
@@ -17,10 +20,18 @@ public class MongoClientConnection {
     private boolean connected = false;
     private static final Logger logger = LoggerFactory.getLogger(MongoClientConnection.class);
 
+    /**
+     * Constructor
+     * @param config The MongoConfig from which to establish the connection
+     */
     public MongoClientConnection(MongoConfig config) {
         this.config = config;
     }
 
+    /**
+     * Establish the Mongo connection based on initial config
+     * @throws MongoException
+     */
     public void connect() throws MongoException {
         try {
             this.mongoClient = new Mongo(config.host, config.port);
@@ -34,8 +45,12 @@ public class MongoClientConnection {
         }
     }    
 
+    /**
+     * Close the mongo connection
+     */
     public void close() {
         mongoClient.close();
+        logger.info("Closed connection to " + config.systemName + " MongoDB " + config.host + ":" + config.port);
     }
 
     /**

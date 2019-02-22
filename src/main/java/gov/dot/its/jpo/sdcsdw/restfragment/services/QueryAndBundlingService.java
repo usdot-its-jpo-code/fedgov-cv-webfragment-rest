@@ -15,6 +15,18 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
 public interface QueryAndBundlingService {
 
+    /**
+     * Combine query and bundling operations to complete the query request
+     * @param query the Query
+     * @return the QueryResult
+     * @throws CodecFailedException
+     * @throws FormattingFailedException
+     * @throws UnformattingFailedException
+     * @throws IOException
+     * @throws DecoderException
+     * @throws JAXBException
+     * @throws InvalidQueryException
+     */
     public QueryResult queryAndBundle(Query query) throws CodecFailedException,
             FormattingFailedException, UnformattingFailedException, IOException,
             DecoderException, JAXBException, InvalidQueryException;

@@ -12,16 +12,28 @@ import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.CloseableInsertSitDataDao
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoConfig;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.MongoOptionsBuilder;
 
+/**
+ * Represents the connection to Mongo used for depositing
+ */
 public class MongoClientDepositConnection {
     
     private MongoConfig config;
     private CloseableInsertSitDataDao dao;
     private static final Logger logger = LoggerFactory.getLogger(MongoClientDepositConnection.class);
     
+    /**
+     * Constructor
+     * @param config The MongoConfig from which to establish the connection
+     */
     public MongoClientDepositConnection(MongoConfig config) {
         this.config = config;
     }
 
+    /**
+     * Establish connection based on the initial config
+     * @throws UnknownHostException
+     * @throws MongoException
+     */
     public void connect() throws UnknownHostException, MongoException {
         try {
             MongoOptions options = new MongoOptionsBuilder().setAutoConnectRetry(config.autoConnectRetry).setConnectTimeoutMs(config.connectionTimeoutMs).build();
@@ -36,8 +48,12 @@ public class MongoClientDepositConnection {
         }
     }
     
+    /**
+     * Close the Mongo connection
+     */
     public void depositConnectionClose() {
         dao.close();
+        logger.info("Closed connection to " + config.systemName + " MongoDB " + config.host + ":" + config.port);
     }
     
     /**
@@ -48,7 +64,7 @@ public class MongoClientDepositConnection {
     }
     
     /**
-     * @return the DAO.
+     * @return the DAO
      */
     public CloseableInsertSitDataDao getDao() {
         return dao;

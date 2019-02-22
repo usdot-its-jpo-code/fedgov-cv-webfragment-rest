@@ -16,6 +16,9 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.Query;
 import gov.dot.its.jpo.sdcsdw.restfragment.util.QueryOptions;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 
+/**
+ * Implementation of the QueryService interface
+ */
 @Service
 @Primary
 public class QueryServiceImpl implements QueryService {
@@ -23,6 +26,10 @@ public class QueryServiceImpl implements QueryService {
     private WarehouseService warehouseService;
     private static final Logger logger = LoggerFactory.getLogger(QueryServiceImpl.class);
 
+    /**
+     * Constructor
+     * @param warehouseService the warehouse service the query is executed against
+     */
     @Autowired
     public QueryServiceImpl(WarehouseService warehouseService) {
         this.warehouseService = warehouseService;

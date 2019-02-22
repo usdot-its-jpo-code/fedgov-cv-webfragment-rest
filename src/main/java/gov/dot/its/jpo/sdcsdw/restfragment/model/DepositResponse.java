@@ -1,5 +1,8 @@
 package gov.dot.its.jpo.sdcsdw.restfragment.model;
 
+/**
+ * POJO for the deposit response.
+ */
 public class DepositResponse {
 
     private int depositCount;

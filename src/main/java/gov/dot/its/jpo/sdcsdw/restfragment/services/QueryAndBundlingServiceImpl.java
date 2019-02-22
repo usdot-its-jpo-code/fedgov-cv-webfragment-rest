@@ -31,6 +31,9 @@ import gov.dot.its.jpo.sdcsdw.restfragment.model.QueryResult;
 import gov.dot.its.jpo.sdcsdw.websocketsfragment.mongo.InvalidQueryException;
 import gov.dot.its.jpo.sdcsdw.xerjaxbcodec.XerJaxbCodec;
 
+/**
+ * Implementation of the QueryAndBunldingService interface.
+ */
 @Service
 @Primary
 public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
@@ -40,6 +43,12 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
     private EncoderService encoderService;
     private final static Logger logger = LoggerFactory.getLogger(QueryAndBundlingServiceImpl.class);
 
+    /**
+     * Constructor
+     * @param queryService
+     * @param bundleService
+     * @param encoderService
+     */
     @Autowired
     public QueryAndBundlingServiceImpl(QueryService queryService, BundlingService bundleService, EncoderService encoderService) {
         this.queryService = queryService;
@@ -70,96 +79,5 @@ public class QueryAndBundlingServiceImpl implements QueryAndBundlingService {
         QueryResult qr = new QueryResult();
         qr.setResults(postEncodedResults);
         return qr;
-
-        /*
-         * //Check the result packaging query parameter. If none, package into
-         * //QueryResults and return. If packaging is bundle or distribution,
-         * //format the results into AdvisorySituationData objects, and call
-         * //bundling service.
-         * 
-         * QueryResult qr = new QueryResult();
-         * 
-         * //If the result packaging parameter is not null and does not equal
-         * none if(!query.getResultPackaging().equals("none")) { //create ASD
-         * list and bundle List<AdvisorySituationData> asdList =
-         * convertResultsToASDList(queryResults, query);
-         * 
-         * //Call BundleService to get bundle or distribution
-         * //if(query.getResultPackaging().equals("bundle"))
-         * //this.bundleService.createBundleList(asdList, query);
-         * 
-         * //if(query.getResultPackaging().equals("distribution"))
-         * //this.bundleService.createDistributionList(asdList, query);
-         * 
-         * //Requires converting bundle/distribution to string
-         * 
-         * } else { qr.setResults(queryResults); }
-         * 
-         * 
-         * return qr;
-         */
     }
-
-    /*
-     * private List<AdvisorySituationData> convertResultsToASDList(List<String>
-     * queryResults, Query query) throws IOException, DecoderException,
-     * CodecFailedException, FormattingFailedException,
-     * UnformattingFailedException, JAXBException {
-     * 
-     * List<AdvisorySituationData> asdList = new
-     * ArrayList<AdvisorySituationData>();
-     * 
-     * //Determine how the results are encoded from query parameter String
-     * resultEncoding = query.getResultEncoding();
-     * 
-     * //For each queryResult for(String queryResult : queryResults) {
-     * 
-     * String encodedMsgAsHex = null; if(resultEncoding.equalsIgnoreCase("hex"))
-     * { //Do nothing, already in necessary format encodedMsgAsHex =
-     * queryResult;
-     * 
-     * } else if(resultEncoding.equalsIgnoreCase("base64")) { //Convert to hex
-     * encodedMsgAsHex = Hex.encodeHexString(Base64.decodeBase64(queryResult));
-     * 
-     * } else if(resultEncoding.equalsIgnoreCase("full")) { //Extract encodedMsg
-     * ObjectMapper mapper = new ObjectMapper(); try { JsonNode node =
-     * mapper.readTree(queryResult); String encodedMsg =
-     * node.findValue("encodedMsg").textValue();
-     * 
-     * //Convert encodedMsg into hex (default stored as base64) encodedMsgAsHex
-     * = Hex.encodeHexString(Base64.decodeBase64(encodedMsg)); } catch
-     * (IOException e) {
-     * logger.error("Unable to retrieve encodedMsg from full query result", e);
-     * throw e; } }
-     * 
-     * AdvisorySituationData asd = convertResultToASD(encodedMsgAsHex);
-     * asdList.add(asd); }
-     * 
-     * 
-     * return asdList; }
-     * 
-     * //Query result must be converted to hex (encodedMsg as hex equivalent to
-     * hex encoded ASD) private AdvisorySituationData convertResultToASD(String
-     * hexEncodedASD) throws DecoderException, CodecFailedException,
-     * FormattingFailedException, UnformattingFailedException, JAXBException {
-     * 
-     * AdvisorySituationData asd = null; byte[] hexEncodedASDAsByte = null; try
-     * { hexEncodedASDAsByte = Hex.decodeHex(hexEncodedASD.toCharArray()); }
-     * catch (DecoderException e) {
-     * logger.error("Unable to decode message from hex to byte", e); throw e; }
-     * 
-     * try { //Decode byte array to XML String xerEncodedASD =
-     * (PerXerCodec.perToXer(Asn1Types.getAsn1TypeByName("AdvisorySituationData"
-     * ), hexEncodedASDAsByte, RawPerData.unformatter, RawXerData.formatter));
-     * 
-     * // Convert XML to POJO asd = (AdvisorySituationData)
-     * XerJaxbCodec.XerToJaxbPojo(xerEncodedASD);
-     * 
-     * } catch (CodecFailedException | FormattingFailedException |
-     * UnformattingFailedException | JAXBException e) {
-     * logger.error("Failed to decode and convert to POJO ASD", e); throw e; }
-     * 
-     * return asd; }
-     */
-
 }
