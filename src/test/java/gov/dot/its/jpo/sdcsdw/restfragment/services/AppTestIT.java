@@ -7,14 +7,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -118,8 +124,40 @@ public class AppTestIT
     }
     
     @Test
-    public void test() throws Exception {
+    public void testQueryEmptyDatabase() throws Exception {
+        genericQueryTest("/it/initial-database-contents/empty.json", "/it/query/full-no-bundling.json", "/it/query-results/empty.json");
     }
+    
+    private void genericQueryTest(String databaseContentsResourcePath, String queryResourcePath, String expectedResultResourcePath) throws Exception {
+        genericQueryTest(loadJsonListFromResource(databaseContentsResourcePath), loadJsonFromResource(queryResourcePath), loadJsonFromResource(expectedResultResourcePath));
+    }
+    
+    private void genericDepositTest(String initialDatabaseContentsResourcePath, String depositResourcePath, String expectedResultResourcePath, String expectedInDatabaseResourcePath) throws Exception {
+        genericDepositTest(loadJsonListFromResource(initialDatabaseContentsResourcePath), loadJsonFromResource(depositResourcePath), loadJsonFromResource(expectedResultResourcePath), loadJsonListFromResource(expectedInDatabaseResourcePath));
+    }
+    
+    
+    private void genericQueryTest(List<JsonNode> databaseContents, JsonNode query, JsonNode expectedResult) throws Exception {
+        for (JsonNode asd : databaseContents) {
+            insertAsd(asd);
+        }
+        
+        queryAndAssertResult(query, expectedResult);
+    }
+    
+    private void genericDepositTest(List<JsonNode> initialDatabaseContents, JsonNode deposit, JsonNode expectedResult, List<JsonNode> expectedInDatabase) throws Exception {
+        for (JsonNode asd : initialDatabaseContents) {
+            insertAsd(asd);
+        }
+        
+        depositAndAssertResult(deposit, expectedResult);
+        
+        for (JsonNode expectedAsd : expectedInDatabase) {
+            assertMongoHasAsd(expectedAsd);
+        }
+    }
+    
+    
     
     private void insertAsd(JsonNode asd) throws Exception {
         travelerInformation.insertOne(asd);
@@ -146,7 +184,7 @@ public class AppTestIT
     
     private void queryAndAssertResult(JsonNode query, JsonNode expectedResult) throws Exception {
         MockHttpServletRequestBuilder request =
-                post("/rest/v2/query")
+                post("/v2/query")
                     .content(mapper.writeValueAsString(query))
                     .contentType(MediaType.APPLICATION_JSON_VALUE);
         mockMvc
@@ -157,7 +195,7 @@ public class AppTestIT
     
     private void depositAndAssertResult(JsonNode deposit, JsonNode expectedResult) throws Exception {
         MockHttpServletRequestBuilder request =
-                post("/rest/v2/deposit")
+                post("/v2/deposit")
                     .content(mapper.writeValueAsString(deposit))
                     .contentType(MediaType.APPLICATION_JSON_VALUE);
         
@@ -167,23 +205,14 @@ public class AppTestIT
             .andExpect(content().json(mapper.writeValueAsString(expectedResult)));
     }
     
-    private void genericQueryTest(List<JsonNode> databaseContents, JsonNode query, JsonNode expectedResult) throws Exception {
-        for (JsonNode asd : databaseContents) {
-            insertAsd(asd);
-        }
-        
-        queryAndAssertResult(query, expectedResult);
+    private JsonNode loadJsonFromResource(String resourcePath) throws Exception {
+        return mapper.readTree(AppTestIT.class.getResourceAsStream(resourcePath));
     }
     
-    private void genericDepositTest(List<JsonNode> initialDatabaseContents, JsonNode deposit, JsonNode expectedResult, List<JsonNode> expectedInDatabase) throws Exception {
-        for (JsonNode asd : initialDatabaseContents) {
-            insertAsd(asd);
-        }
-        
-        depositAndAssertResult(deposit, expectedResult);
-        
-        for (JsonNode expectedAsd : expectedInDatabase) {
-            assertMongoHasAsd(expectedAsd);
-        }
+    private List<JsonNode> loadJsonListFromResource(String resourcePath) throws Exception {
+        JsonNode jsonListNode = loadJsonFromResource(resourcePath);
+        return StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(jsonListNode.elements(), Spliterator.ORDERED), false)
+                .collect(Collectors.toList());
     }
 }
