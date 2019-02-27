@@ -15,12 +15,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,6 +47,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.util.JSON;
 
 import de.flapdoodle.embed.mongo.Command;
@@ -75,6 +78,14 @@ public class AppTestIT
     private static MongoClient mongoClient;
     private static MongoCollection<DBObject> travelerInformation;
     
+    public static final String MONGO_DATABASE_NAME="cvdb";
+    public static final String TRAVELER_INFORMATION_COLLECTION_NAME="travelerInformation";
+    public static final String SESSION_COLLECTION_NAME="session";
+    public static final String EXPIRATION_INDEX_FIELD="expireAt";
+    public static final String CREATION_TIME_INDEX_FIELD="createdAt";
+    public static final String SERVICE_REGION_INDEX_FIELD="region";
+    public static final String REQUEST_ID_INDEX_FIELD="requestId";
+    
     private ObjectMapper mapper = new ObjectMapper();
     
     private MockMvc mockMvc;
@@ -86,8 +97,6 @@ public class AppTestIT
     public static void setup() throws Exception {
         String ip = "localhost";
         int port = 27017;
-        String dbName = "cvdb";
-        String collectionName = "travelerInformation";
  
         IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.V3_4)
             .net(new Net(ip, port, Network.localhostIsIPv6()))
@@ -101,10 +110,48 @@ public class AppTestIT
         mongodExecutable.start();
         mongoClient = new MongoClient(ip, port);
         
-        MongoDatabase mongoDatabase = mongoClient.getDatabase(dbName);
-        travelerInformation = mongoDatabase.getCollection(collectionName, JsonNode.class);
+        MongoDatabase mongoDatabase = mongoClient.getDatabase(MONGO_DATABASE_NAME);
+        travelerInformation = mongoDatabase.getCollection(TRAVELER_INFORMATION_COLLECTION_NAME, DBObject.class);
+        
+        createIndices();
     }
     
+    private static void createIndices()
+    {
+        BasicDBObject expirationIndex = new BasicDBObject();
+        expirationIndex.put(EXPIRATION_INDEX_FIELD, 1);
+        IndexOptions expirationIndexOpts = new IndexOptions();
+        expirationIndexOpts.expireAfter(0l, TimeUnit.SECONDS);
+        expirationIndexOpts.background(true);
+        
+        travelerInformation.createIndex(expirationIndex, expirationIndexOpts);
+        
+        BasicDBObject serviceRegionIndex = new BasicDBObject();
+        serviceRegionIndex.put(SERVICE_REGION_INDEX_FIELD, "2dsphere");
+        serviceRegionIndex.put(CREATION_TIME_INDEX_FIELD, 1);
+        IndexOptions serviceRegionIndexOpts = new IndexOptions();
+        serviceRegionIndexOpts.background(true);
+        
+        travelerInformation.createIndex(serviceRegionIndex, serviceRegionIndexOpts);
+
+        
+        BasicDBObject requestIdIndex = new BasicDBObject();
+        requestIdIndex.put(REQUEST_ID_INDEX_FIELD, 1);
+        requestIdIndex.put(CREATION_TIME_INDEX_FIELD, 1);
+        IndexOptions requestIdIndexOpts = new IndexOptions();
+        requestIdIndexOpts.background(true);
+        
+        travelerInformation.createIndex(requestIdIndex, requestIdIndexOpts);
+        
+        BasicDBObject creationTimeIndex = new BasicDBObject();
+        creationTimeIndex.put(CREATION_TIME_INDEX_FIELD, 1);
+        IndexOptions creationTimeIndexOpts = new IndexOptions();
+        creationTimeIndexOpts.background(true);
+        
+        travelerInformation.createIndex(creationTimeIndex, creationTimeIndexOpts);
+        
+    }
+
     public void cleanDatabase() throws Exception {
         travelerInformation.deleteMany(new BasicDBObject());
     }
