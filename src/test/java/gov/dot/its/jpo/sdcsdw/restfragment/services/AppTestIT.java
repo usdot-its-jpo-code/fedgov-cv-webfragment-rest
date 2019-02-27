@@ -128,6 +128,11 @@ public class AppTestIT
         genericQueryTest("/it/initial-database-contents/empty.json", "/it/query/full-no-bundling.json", "/it/query-results/empty.json");
     }
     
+    @Test
+    public void testQuerySingleHex() throws Exception {
+        genericQueryTest("/it/initial-database-contents/single-hex.json", "/it/query/full-no-bundling.json", "/it/query-results/full-no-bundling-single-hex.json");
+    }
+    
     private void genericQueryTest(String databaseContentsResourcePath, String queryResourcePath, String expectedResultResourcePath) throws Exception {
         genericQueryTest(loadJsonListFromResource(databaseContentsResourcePath), loadJsonFromResource(queryResourcePath), loadJsonFromResource(expectedResultResourcePath));
     }
