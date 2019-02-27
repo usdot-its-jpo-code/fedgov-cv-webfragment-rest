@@ -41,9 +41,11 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.util.JSON;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
@@ -71,7 +73,7 @@ public class AppTestIT
 {
     private static MongodExecutable mongodExecutable;
     private static MongoClient mongoClient;
-    private static MongoCollection<JsonNode> travelerInformation;
+    private static MongoCollection<DBObject> travelerInformation;
     
     private ObjectMapper mapper = new ObjectMapper();
     
@@ -165,7 +167,7 @@ public class AppTestIT
     
     
     private void insertAsd(JsonNode asd) throws Exception {
-        travelerInformation.insertOne(asd);
+        travelerInformation.insertOne((DBObject)JSON.parse(mapper.writeValueAsString(asd)));
     }
     
     private void assertMongoHasAsd(JsonNode expected) throws Exception {
@@ -182,6 +184,7 @@ public class AppTestIT
         Set<JsonNode> matchSet = 
                 StreamSupport
                     .stream(travelerInformation.find(filter).spliterator(), false)
+                    .map((x) -> { try { return mapper.readTree(JSON.serialize(x)); } catch (Exception e) { throw new RuntimeException(e); } })
                     .collect(Collectors.toSet());
         
         assertTrue(matchSet.contains(expected));
