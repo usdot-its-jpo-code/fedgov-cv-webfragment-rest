@@ -157,12 +157,6 @@
     </dependency>
 
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>gov.dot.its.jpo.sdcsdw</groupId>
@@ -174,6 +168,12 @@
       <groupId>gov.usdot</groupId>
       <artifactId>fedgov-cv-webapp-websocket</artifactId>
       <version>1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -193,6 +193,20 @@
       <groupId>gov.dot.its.jpo.sdcsdw</groupId>
       <artifactId>per-xer-codec-java</artifactId>
       <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
+      <version>1.5.0</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
